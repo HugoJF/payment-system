@@ -1,0 +1,251 @@
+/**
+ * This injects Tailwind's base styles, which is a combination of
+ * Normalize.css and some additional base styles.
+ *
+ * You can see the styles here:
+ * https://github.com/tailwindcss/tailwindcss/blob/master/css/preflight.css
+ *
+ * If using `postcss-import`, use this import instead:
+ *
+ * @import "tailwindcss/preflight";
+ */
+@tailwind preflight;
+
+/**
+ * This injects any component classes registered by plugins.
+ *
+ * If using `postcss-import`, use this import instead:
+ *
+ * @import "tailwindcss/components";
+ */
+@tailwind components;
+
+/**
+ * Here you would add any of your custom component classes; stuff that you'd
+ * want loaded *before* the utilities so that the utilities could still
+ * override them.
+ *
+ * Example:
+ *
+ * .btn { ... }
+ * .form-input { ... }
+ *
+ * Or if using a preprocessor or `postcss-import`:
+ *
+ * @import "components/buttons";
+ * @import "components/forms";
+ */
+
+/**
+ * This injects all of Tailwind's utility classes, generated based on your
+ * config file.
+ *
+ * If using `postcss-import`, use this import instead:
+ *
+ * @import "tailwindcss/utilities";
+ */
+@tailwind utilities;
+
+/**
+ * Transitions
+ */
+
+.trans {
+    transition: all .25s;
+}
+
+.trans-bg {
+    transition-property: background;
+}
+
+.trans-slow {
+    transition-duration: .5s;
+}
+
+.trans-slower {
+    transition-duration: .5s;
+}
+
+.trans-fast {
+    transition-duration: .15s;
+}
+
+.trans-faster {
+    transition-duration: .075s;
+}
+
+/**
+ * Keyframes
+ */
+
+@-webkit-keyframes pulse {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 rgba(227, 52, 47, 0.8);
+    }
+    50% {
+        -webkit-box-shadow: 0 0 0 25px rgba(227, 52, 47, 0);
+    }
+    100% {
+        -webkit-box-shadow: 0 0 0 0 rgba(227, 52, 47, 0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(227, 52, 47, 0.8);
+        box-shadow: 0 0 0 0 rgba(227, 52, 47, 0.8);
+    }
+    50% {
+        -moz-box-shadow: 0 0 0 25px rgba(227, 52, 47, 0);
+        box-shadow: 0 0 0 25px rgba(227, 52, 47, 0);
+    }
+    100% {
+        -moz-box-shadow: 0 0 0 0 rgba(227, 52, 47, 0);
+        box-shadow: 0 0 0 0 rgba(227, 52, 47, 0);
+    }
+}
+
+@-webkit-keyframes pulse-blue {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 rgba(52, 144, 220, 0.8);
+    }
+    50% {
+        -webkit-box-shadow: 0 0 0 15px rgba(52, 144, 220, 0);
+    }
+    100% {
+        -webkit-box-shadow: 0 0 0 0 rgba(52, 144, 220, 0);
+    }
+}
+
+@keyframes pulse-blue {
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(52, 144, 220, 0.8);
+        box-shadow: 0 0 0 0 rgba(52, 144, 220, 0.8);
+    }
+    50% {
+        -moz-box-shadow: 0 0 0 15px rgba(52, 144, 220, 0);
+        box-shadow: 0 0 0 15px rgba(52, 144, 220, 0);
+    }
+    100% {
+        -moz-box-shadow: 0 0 0 0 rgba(52, 144, 220, 0);
+        box-shadow: 0 0 0 0 rgba(52, 144, 220, 0);
+    }
+}
+
+/*
+ * Animations
+ */
+.pulse-blue {
+    -webkit-animation: 1s pulse-blue ease-out infinite;
+    -o-animation: 1s pulse-blue ease-out infinite;
+    animation: 1s pulse-blue ease-out infinite;
+}
+
+.pulse-blue-fast {
+    -webkit-animation: 0.5s pulse-blue ease-out infinite;
+    -o-animation: 0.5s pulse-blue ease-out infinite;
+    animation: 0.5s pulse-blue ease-out infinite;
+}
+
+.pulse-blue-slow {
+    -webkit-animation: 2s pulse-blue ease-out infinite;
+    -o-animation: 2s pulse-blue ease-out infinite;
+    animation: 2s pulse-blue ease-out infinite;
+}
+
+/*
+ * Transforms
+ */
+
+.-translate-50 {
+    transform: translateY(-50%);
+}
+
+.scale-110 {
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+/**
+ * Shadows
+ */
+.shadow-3d-blue-sm {
+    box-shadow: 0 4px #1c3d5a;
+}
+
+.shadow-3d-blue-md {
+    box-shadow: 0 6px #1c3d5a;
+}
+
+.shadow-3d-blue-lg {
+    box-shadow: 0 8px #1c3d5a;
+}
+
+.shadow-3d-red-sm {
+    box-shadow: 0 4px #67110e;
+}
+
+.shadow-3d-red-md {
+    box-shadow: 0 6px #67110e;
+}
+
+.shadow-3d-red-lg {
+    box-shadow: 0 8px #67110e;
+}
+
+.shadow-3d-white-sm {
+    box-shadow: 0 4px #b8c5da;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Behind the navbar */
+    padding: 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 48px; /* Height of navbar */
+    height: 100vh;
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.navbar-z {
+    top: 48px;
+    z-index: 1030;
+}
+
+.feather {
+    vertical-align: text-bottom;
+    @apply w-5
+    h-5 text-grey-light mr-3;
+}
+
+.group:hover .feather {
+    @apply text-white;
+}
+
+/**
+ * Here you would add any custom utilities you need that don't come out of the
+ * box with Tailwind.
+ *
+ * Example :
+ *
+ * .bg-pattern-graph-paper { ... }
+ * .skew-45 { ... }
+ *
+ * Or if using a preprocessor or `postcss-import`:
+ *
+ * @import "utilities/background-patterns";
+ * @import "utilities/skew-transforms";
+ */
