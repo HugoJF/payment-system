@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Classes\MP2;
-use App\Exceptions\AlreadyInitializedOrderException;
 use App\Exceptions\MPResponseException;
 use App\MPOrder;
 use App\Order;
@@ -45,6 +44,10 @@ class MPOrderController extends Controller
 		// Attempt to create a new MercadoPago preference
 		$preference = MP2::create_preference($this->generatePreferenceData($order));
 
+		// Check if response was valid
+		if (!is_array($preference))
+			throw new MPResponseException('Response is not an array');
+
 		// Check if response was sent
 		if (!array_key_exists('response', $preference))
 			throw new MPResponseException('Invalid MercadoPago API response');
@@ -65,7 +68,11 @@ class MPOrderController extends Controller
 		// Associate details to base order
 		$mpOrder->base()->save($order);
 
-		$order->save();
+		$orderSaved = $order->save();
+
+		// Check if order was saved
+		if (!$orderSaved)
+			throw new MPResponseException('Order could not be saved');
 
 		// Return MP preference details
 		return $preference['response'];
@@ -92,12 +99,12 @@ class MPOrderController extends Controller
 				'unit_price'  => $this->getAmount($order),
 			]],
 			'back_urls'          => [
-				'success' => url("orders/{$order->public_id}/pending"), // TODO: figure a better way to pass this
-				'pending' => url("orders/{$order->public_id}/pending"), // TODO: figure a better way to pass this
-				'failure' => url("orders/{$order->public_id}/failure"), // TODO: figure a better way to pass this
+				'success' => url("orders/{$order->id}/pending"), // TODO: figure a better way to pass this
+				'pending' => url("orders/{$order->id}/pending"), // TODO: figure a better way to pass this
+				'failure' => url("orders/{$order->id}/failure"), // TODO: figure a better way to pass this
 			],
 			'auto_return'        => 'approved',
-			'external_reference' => $order->public_id,
+			'external_reference' => config('mercadopago.reference_prefix'). $order->id,
 			'notification_url'   => route(config('ipn.mp-notifications-route')),
 		];
 

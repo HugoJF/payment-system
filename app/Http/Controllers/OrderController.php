@@ -11,17 +11,20 @@ class OrderController extends Controller
 	public function store(Request $request)
 	{
 		$validation = Validator::make($request->all(), [
-			'reason'            => 'required',
-			'return_url'        => 'required',
-			'cancel_url'        => 'required',
-			'preset_amount'     => 'required|numeric',
-			'unit_price'        => 'required|numeric',
-			'unit_price_limit'  => 'required|numeric',
-			'discount_per_unit' => 'required|numeric',
-			'min_units'         => 'required|numeric',
-			'max_units'         => 'required|numeric',
-			'payer_steam_id'    => 'string',
-			'payer_tradelink'   => 'string',
+			'reason'                => 'required',
+			'return_url'            => 'required',
+			'cancel_url'            => 'required',
+			'preset_amount'         => 'required|numeric',
+			'unit_price'            => 'required|numeric',
+			'unit_price_limit'      => 'required|numeric',
+			'discount_per_unit'     => 'required|numeric',
+			'min_units'             => 'required|numeric',
+			'max_units'             => 'required|numeric',
+			'payer_steam_id'        => 'string',
+			'avatar'                => 'string',
+			'payer_tradelink'       => 'string|nullable',
+			'product_name_singular' => 'string|nullable',
+			'product_name_plural'   => 'string|nullable',
 		]);
 
 		// Check if request has every required field
@@ -32,9 +35,6 @@ class OrderController extends Controller
 		$order = Order::make();
 
 		$order->fill($validation->validated());
-
-		// TODO: this should be on creation with an observer
-		$order->public_id = substr(md5(microtime(true)), 0, 5);
 
 		$order->save();
 

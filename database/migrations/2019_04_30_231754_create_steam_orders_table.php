@@ -20,8 +20,9 @@ class CreateSteamOrdersTable extends Migration
 
 			$table->bigInteger('tradeoffer_id')->unsigned()->nullable();
 			$table->integer('tradeoffer_state')->unsigned()->nullable();
+			$table->timestamp('tradeoffer_sent_at')->nullable();
 
-            $table->timestamps();
+			$table->timestamps();
         });
     }
 

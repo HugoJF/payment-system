@@ -1,40 +1,54 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Hugo
- * Date: 5/16/2019
- * Time: 5:42 PM
- */
 
 namespace App\Classes;
 
 class MockableWrapper
 {
-	public static $saving = true;
-	public static $mocking = true;
+	public static $saving = false;
+	public static $mocking = false;
 	public static $responses = [];
 	public static $folder = 'misc';
+	public static $exceptionWhenMockIsNotFound = true;
 
-	protected static function startMocking()
+	/**
+	 * Instructs the class to mock responses
+	 */
+	public static function startMocking()
 	{
 		static::$mocking = true;
 	}
 
-	protected static function stopMocking()
+	/**
+	 * Stops mocking responses
+	 */
+	public static function stopMocking()
 	{
 		static::$mocking = false;
 	}
 
-	protected static function startSaving()
+	/**
+	 * Starts saving every response
+	 */
+	public static function startSaving()
 	{
 		static::$saving = true;
 	}
 
-	protected static function stopSaving()
+	/**
+	 * Stops saving responses
+	 */
+	public static function stopSaving()
 	{
 		static::$saving = false;
 	}
 
+	/**
+	 * Gets a full path for the correct Mocking folder
+	 *
+	 * @param $name - file name to be transformed to path
+	 *
+	 * @return string - path
+	 */
 	protected static function getPathByName($name)
 	{
 		$folder = static::$folder;
@@ -42,6 +56,12 @@ class MockableWrapper
 		return app_path("Mock/$folder/" . preg_replace('/[^A-Z0-9]/i', '-', $name));
 	}
 
+	/**
+	 * Write content to mocking folder
+	 *
+	 * @param $name    - filename
+	 * @param $content - content of mock
+	 */
 	protected static function writeToFile($name, $content)
 	{
 		$file = fopen(self::getPathByName($name), 'w');
@@ -49,6 +69,13 @@ class MockableWrapper
 		fclose($file);
 	}
 
+	/**
+	 * Reads content from mocking folder
+	 *
+	 * @param $name - filename
+	 *
+	 * @return object - JSON decoded content
+	 */
 	protected static function readFromFile($name)
 	{
 		$path = self::getPathByName($name);
@@ -56,58 +83,88 @@ class MockableWrapper
 		$content = fread($file, filesize($path));
 		fclose($file);
 
-		return $content;
+		return json_decode($content, true);
 	}
 
+	/**
+	 * Mock method
+	 *
+	 * @param $request  - function name to be mocked
+	 * @param $fileName - filename containing mock information
+	 */
 	public static function mockByFile($request, $fileName)
 	{
-		$path = self::getPathByName($fileName);
-
-		$content = self::readFromFile($path);
+		$content = self::readFromFile($fileName);
 
 		static::$responses[ $request ] = $content;
 	}
 
+	/**
+	 * Saves response to file (if saving is activated)
+	 *
+	 * @param $name     - filename to be saved
+	 * @param $response - response contents
+	 *
+	 * @return mixed - response content
+	 */
 	public static function saveResponse($name, $response)
 	{
-		if (static::$saving) {
-			$path = self::getPathByName($name);
-
-			self::writeToFile($path, $response);
-		}
+		if (static::$saving)
+			self::writeToFile($name . microtime(true), $response);
 
 		return $response;
 	}
 
 	/**
-	 * @param $name
+	 * Attempts to find a mocked response and throws error if mode allows
+	 *
+	 * @param $name - method name to be mocked
 	 *
 	 * @return mixed
 	 * @throws \Exception
 	 */
 	protected static function getMockedResponse($name)
 	{
+		// Check if we have a loaded mock for incoming function
 		if (array_key_exists($name, static::$responses)) {
 			return static::$responses[ $name ];
-		} else {
+		}
+
+		// Check if exception should be thrown
+		if (static::$exceptionWhenMockIsNotFound) {
 			throw new \Exception("Trying to mock response $name but a mocked response was not set.");
 		}
+
+		// Return false since we could not mock the response
+		return false;
 	}
 
+	/**
+	 * @param $name      - the name of the calling function
+	 * @param $arguments - arguments
+	 *
+	 * @return mixed - return value of the calling function
+	 *
+	 * @throws \Exception - when the calling function could not be found
+	 */
 	public static function __callStatic($name, $arguments)
 	{
+		// Check if call should be mocked
 		if (static::$mocking) {
-			return static::getMockedResponse($name);
+			$mock = static::getMockedResponse($name);
+			if ($mock)
+				return $mock;
 		}
 
+		// Build forward function names
 		$method = "_$name";
 		$function = "static::$method";
 
+		// Attempts to forward the call
 		if (method_exists(static::class, $method)) {
-			$response = forward_static_call($function, $arguments);
-			static::saveResponse($name, $response);
+			$response = forward_static_call_array($function, $arguments);
 
-			return $response;
+			return static::saveResponse($name, $response);
 		} else {
 			throw new \Exception("Function $function does not exists");
 		}

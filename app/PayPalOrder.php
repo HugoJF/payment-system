@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Classes\PayPalWrapper;
 use App\Contracts\OrderContract;
 use App\Exceptions\PayPalCommunicationException;
 use App\Exceptions\PayPalNoPayerIdException;
@@ -21,8 +22,6 @@ class PayPalOrder extends Model implements OrderContract
 {
 	protected $table = 'paypal_orders';
 
-	public $aliases = ['PayPal', 'PayPalOrder', 'PPOrder', 'PP'];
-
 	/*****************
 	 * RELATIONSHIPS *
 	 *****************/
@@ -41,10 +40,8 @@ class PayPalOrder extends Model implements OrderContract
 	 */
 	public function recheck()
 	{
-		$provider = new ExpressCheckout();
-
 		// Check if PayPal has checkout details
-		$response = $provider->getExpressCheckoutDetails($this->token);
+		$response = PayPalWrapper::getExpressCheckoutDetails($this->token);
 
 		// Check if response was successful
 		if (!in_array(strtoupper($response['ACK']), ['SUCCESS', 'SUCCESSWITHWARNING']))
@@ -56,20 +53,20 @@ class PayPalOrder extends Model implements OrderContract
 
 		// If there is no transaction, and this code is reached, execute transaction
 		if (!array_key_exists('TRANSACTIONID', $response)) {
-			$response = $provider->doExpressCheckoutPayment(self::getCheckoutCart($this->base), $this->token, $response['PAYERID']);
+			$response = PayPalWrapper::doExpressCheckoutPayment(self::getCheckoutCart($this->base), $this->token, $response['PAYERID']);
 			Log::info('DoExpressCheckoutPayment response', ['response' => $response]);
-			$response = $provider->getExpressCheckoutDetails($this->token);
+			$response = PayPalWrapper::getExpressCheckoutDetails($this->token);
 		}
 
 		// If no transaction
 		if (!array_key_exists('TRANSACTIONID', $response))
-			throw new PayPalNoTransactionIdException("There are no transaction ID associated with order {$this->base->public_id} TOKEN={$this->token}.");
+			throw new PayPalNoTransactionIdException("There are no transaction ID associated with order {$this->base->id} TOKEN={$this->token}.");
 
 		// Update order transaction
 		$this->transaction_id = $response['TRANSACTIONID'];
 
 		// Retrieve payment details
-		$paymentDetails = $provider->getTransactionDetails($this->transaction_id);
+		$paymentDetails = PayPalWrapper::getTransactionDetails($this->transaction_id);
 		$status = $paymentDetails['PAYMENTSTATUS'];
 
 		// Update database
@@ -94,7 +91,6 @@ class PayPalOrder extends Model implements OrderContract
 		return self::class;
 	}
 
-
 	/**************
 	 * OVERWRITES *
 	 **************/
@@ -106,8 +102,7 @@ class PayPalOrder extends Model implements OrderContract
 	 */
 	public static function getCheckoutCart(Order $order)
 	{
-		$order_id = $order->public_id;
-		$data = [];
+		$order_id = $order->id;
 
 		// Set checkout options
 		$data['items'] = [[
@@ -117,8 +112,8 @@ class PayPalOrder extends Model implements OrderContract
 		]];
 		$data['invoice_id'] = config('paypal.invoice_prefix') . '_' . $order_id;
 		$data['invoice_description'] = "Pedido #$order_id";
-		$data['return_url'] = url("orders/{$order->public_id}/pending"); // TODO: why no $order?
-		$data['cancel_url'] = url("orders/{$order->public_id}/cancel");
+		$data['return_url'] = url("orders/{$order->id}/pending");
+		$data['cancel_url'] = url("orders/{$order->id}/cancel");
 
 		// Calculate total price
 		$total = collect($data['items'])->reduce(function ($total, $item) {

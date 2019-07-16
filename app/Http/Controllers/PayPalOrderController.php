@@ -2,23 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\MPOrder;
+use App\Classes\PayPalWrapper;
 use App\Order;
 use App\PayPalOrder;
-use Srmklive\PayPal\Services\ExpressCheckout;
 
 class PayPalOrderController extends Controller
 {
-	/**
-	 * @var ExpressCheckout
-	 */
-	protected $provider;
-
-	public function __construct()
-	{
-		$this->provider = new ExpressCheckout();
-	}
-
 	public function execute(Order $order)
 	{
 		if ($order->type() !== PayPalOrder::class)
@@ -26,7 +15,7 @@ class PayPalOrderController extends Controller
 
 		$order->recheck();
 
-		return ['status' => $order->status()]; // TODO: this should return the order?
+		return $order;
 	}
 
 	/**
@@ -39,26 +28,41 @@ class PayPalOrderController extends Controller
 	{
 		$type = $order->type();
 
-		// TODO: why check for $type?
-		if ($type && $type !== PayPalOrder::class) {
+		// Check if order was initialized
+		if ($type && $type !== PayPalOrder::class)
 			throw new \Exception('Order is already initialized by another processor.');
-		}
 
 		// Create order database entries
 		$ppOrder = new PayPalOrder();
 
 		// Persist to database
-		$ppOrder->save();
+		$ppOrderSaved = $ppOrder->save();
+
+		// Check if details were saved
+		if (!$ppOrderSaved)
+			throw new \Exception('PayPal order details could not be saved');
 
 		// Associate details
 		$ppOrder->base()->save($order);
-		$order->save();
+		$orderSaved = $order->save();
+
+		// Check if base order was saved
+		if (!$orderSaved)
+			throw new \Exception('Base order could not be saved');
 
 		// Process checkout cart
 		$cart = PayPalOrder::getCheckoutCart($order);
 
 		// Request PayPal checkout token
-		$response = $this->provider->setExpressCheckout($cart);
+		$response = PayPalWrapper::setExpressCheckout($cart);
+
+		// Check if response is valid
+		if (!is_array($response))
+			throw new \Exception('Invalid response from PayPal');
+
+		// Check if token was returned
+		if (!array_key_exists('TOKEN', $response))
+			throw new \Exception('PayPal did not return a token');
 
 		// Store token and base Order
 		$ppOrder->token = $response['TOKEN'];

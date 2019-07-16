@@ -2,8 +2,11 @@
   <dictionary name="Hugo">
     <words>
       <w>assetid</w>
+      <w>initter</w>
       <w>mercadopago</w>
+      <w>mockable</w>
       <w>pago</w>
+      <w>pagseguro</w>
       <w>paypal</w>
       <w>pedido</w>
     </words>

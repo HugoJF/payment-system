@@ -12,8 +12,25 @@ const tailwindcss = require('tailwindcss');
  |
  */
 
-mix.sourceMaps()
-    .react('resources/js/app.js', 'public/js')
+mix
+    .sourceMaps()
+    .react('resources/js/app.tsx', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
         tailwindcss('./tailwind.js'),
-    ]).version();
+    ])
+    .webpackConfig({
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    loader: "ts-loader",
+                    exclude: /node_modules/
+                }
+            ]
+        },
+        resolve: {
+            extensions: ["*", ".js", ".jsx", ".vue", ".ts", ".tsx"]
+        }
+    })
+    .version()
+;

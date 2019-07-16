@@ -292,7 +292,6 @@ class SteamID
 					$Code = strtr($Code, self::$SteamInviteDictionary);
 					$Length = strlen($Code);
 
-					// TODO: We don't know when Valve starts inserting the dash
 					if ($Length > 3) {
 						$Code = substr_replace($Code, '-', (int)($Length / 2), 0);
 					}

@@ -22,7 +22,6 @@ class CreateMPOrdersTable extends Migration
 			$table->unsignedInteger('mp_paid_amount')->default(0);
 
 			$table->integer('mp_order_id')->unsigned()->nullable();
-			$table->string('mp_order_status')->nullable();
 
             $table->timestamps();
         });

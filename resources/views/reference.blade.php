@@ -14,7 +14,7 @@
 </head>
 <body class="trans bg-grey-light font-sans">
 <div id="root"></div>
-<script src="{{ mix('/js/app.js') }}"></script>
+<script src="{{ mix('/js/app.tsx') }}"></script>
 
 <div class="flex flex-col items-center justify-center p-6 md:p-12 my-32">
     <div class="relative flex justify-center w-full m-auto">

@@ -14,13 +14,16 @@ class CreateOrdersTable extends Migration
 	public function up()
 	{
 		Schema::create('orders', function (Blueprint $table) {
-			$table->bigIncrements('id');
-
-			$table->string('public_id');
+			$table->string('id')->unique();
 
 			$table->string('reason');
 			$table->string('return_url');
 			$table->string('cancel_url');
+
+			$table->string('product_name_singular')->nullable();
+			$table->string('product_name_plural')->nullable();
+
+			$table->string('avatar');
 
 			$table->string('payer_steam_id')->nullable();
 			$table->string('payer_tradelink')->nullable();
@@ -33,6 +36,8 @@ class CreateOrdersTable extends Migration
 
 			$table->unsignedInteger('min_units');
 			$table->unsignedInteger('max_units');
+
+			$table->unsignedInteger('recheck_attempts')->default(0);
 
 			$table->string('orderable_type')->nullable();
 			$table->unsignedBigInteger('orderable_id')->nullable();

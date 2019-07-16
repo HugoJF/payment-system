@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\ShopItem;
+use App\SteamItem;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Ixudra\Curl\Facades\Curl;
@@ -43,9 +43,8 @@ class RefreshItemData extends Command
 		$bsData = collect($rawBsData->prices);
 		$this->info("Collected {$bsData->count()} prices");
 
-		$this->info("After filtering: {$bsData->count()}");
 
-		ShopItem::truncate();
+		SteamItem::truncate();
 
 		$bsData = $bsData->reject(function ($item) {
 			return
@@ -56,9 +55,11 @@ class RefreshItemData extends Command
 				str_contains($item->market_hash_name, 'Souvenir');
 		});
 
+		$this->info("After filtering: {$bsData->count()}");
+
 		$bsData->each(function ($item) {
 			preg_match('/(★ )?(StatTrak™)? ?(.*?) \| (.*?) \((.*?)\)/', $item->market_hash_name, $matches);
-			$i = ShopItem::make();
+			$i = SteamItem::make();
 			$i->fill((array) $item);
 			$i->price = ceil($item->price * 100);
 			try {
@@ -77,6 +78,7 @@ class RefreshItemData extends Command
 			try {
 				$i->save();
 			} catch (\Exception $e) {
+				$this->error("Error while saving item {$item->market_hash_name} " . $e);
 				Log::warning("Error while saving item {$item->market_hash_name}", [
 					'item' => $item,
 				]);

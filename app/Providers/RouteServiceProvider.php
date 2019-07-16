@@ -28,7 +28,7 @@ class RouteServiceProvider extends ServiceProvider
 
 
 		Route::bind('order', function ($value) {
-			return Order::where('public_id', $value)->first();
+			return Order::where('id', $value)->first();
 		});
     }
 

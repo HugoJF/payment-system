@@ -36,14 +36,14 @@ Route::prefix('v1')->group(function () {
 
 		Route::post('/', 'OrderController@store')->name('store');
 
-		Route::get('{order}/mercadopago', 'MPOrderController@init')->name('mp-init');
-		Route::get('{order}/mercadopago/execute', 'MPOrderController@execute')->name('mp-execute');
+		Route::post('{order}/mercadopago', 'MPOrderController@init')->name('mp-init');
+		Route::patch('{order}/mercadopago/execute', 'MPOrderController@execute')->name('mp-execute');
 
-		Route::get('{order}/paypal', 'PayPalOrderController@init')->name('paypal-init');
-		Route::get('{order}/paypal/execute', 'PayPalOrderController@execute')->name('paypal-execute');
+		Route::post('{order}/paypal', 'PayPalOrderController@init')->name('paypal-init');
+		Route::patch('{order}/paypal/execute', 'PayPalOrderController@execute')->name('paypal-execute');
 
-		Route::get('{order}/steam', 'SteamOrderController@init')->name('steam-init');
-		Route::post('{order}/steam/execute', 'SteamOrderController@execute')->name('steam-execute');
+		Route::post('{order}/steam', 'SteamOrderController@init')->name('steam-init');
+		Route::patch('{order}/steam/execute', 'SteamOrderController@execute')->name('steam-execute');
 	});
 
 	Route::prefix('steam')->group(function () {

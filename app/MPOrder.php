@@ -24,8 +24,6 @@ class MPOrder extends Model implements OrderContract
 {
 	protected $table = 'mp_orders';
 
-	public $aliases = ['MP', 'MercadoPago', 'MPOrder', 'MercadoPagoOrder'];
-
 	/*****************
 	 * RELATIONSHIPS *
 	 *****************/
@@ -80,7 +78,7 @@ class MPOrder extends Model implements OrderContract
 				return $total;
 			}
 
-			return $total + round($item['total_paid_amount'] * 100);
+			return $total + round($item['total_paid_amount']);
 		}, 0);
 
 		// Update preference ID if it's not present
@@ -89,20 +87,23 @@ class MPOrder extends Model implements OrderContract
 
 		// Update order status
 		$this->mp_paid_amount = $paidAmount;
-		$this->mp_order_status = $response['status'];
 
 		// Save
 		$this->touch();
 		$this->save();
 
 		// Log
-		Log::info("Order status rechecked {$this->original['mp_order_status']} -> {$this->mp_order_status}");
 		Log::info("Order rechecked with total paid amount: R$ {$this->original['mp_paid_amount']} -> R$ {$this->mp_paid_amount}");
 	}
 
+	/**
+	 * @throws MPEmptyResponseException
+	 * @throws MPResponseException
+	 * @throws \Exception
+	 */
 	protected function searchForPayments()
 	{
-		$response = MP2::payments_search('external_reference', $this->base->public_id);
+		$response = MP2::payments_search('external_reference', config('mercadopago.reference_prefix') . $this->base->id);
 
 		// Check for status in response
 		if (!is_array($response) || !array_key_exists('status', $response))
@@ -123,7 +124,7 @@ class MPOrder extends Model implements OrderContract
 
 		$results = collect($response['results']);
 
-		Log::info("Found {$results->count()} results while searching for payments with external reference: #{$this->public_id}");
+		Log::info("Found {$results->count()} results while searching for payments with external reference: #{$this->id}");
 
 		$orders = $results->pluck('order.id');
 
@@ -155,8 +156,7 @@ class MPOrder extends Model implements OrderContract
 
 	public function status()
 	{
-		// TODO: this is useless? translate to paid?
-		return $this->mp_order_status;
+		return $this->paid() ? 'paid' : 'pending';
 	}
 
 	public function type()

@@ -4,15 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Classes\SteamAccount;
 use App\Classes\SteamID;
+use App\Exceptions\MPEmptyResponseException;
 use App\Order;
-use App\ShopItem;
+use App\SteamItem;
 use App\SteamOrder;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SteamOrderController extends Controller
 {
+	/**
+	 * @param Order $order
+	 *
+	 * @return Order
+	 * @throws \Exception
+	 */
 	public function init(Order $order)
 	{
+		// If this order is already initialized, return existing preference
+		if ($order->orderable && $order->type() !== SteamOrder::class)
+			throw new \Exception('You cannot reinitialize an order');
+		else if ($order->orderable)
+			return $order;
+
+		// Check for tradelink
+		if (empty($order->payer_tradelink))
+			throw new \Exception('Unable to initialize order with Steam because it\'s missing the tradelink');
+
 		/** @var SteamOrder $steamOrder */
 		$steamOrder = SteamOrder::create();
 
@@ -21,28 +39,30 @@ class SteamOrderController extends Controller
 		$order->save();
 		$steamOrder->save();
 
-		return ['status' => 'initialized'];
+		return $order;
 	}
 
 	public function execute(Request $request, Order $order)
 	{
-		// TODO: is this steam order?
+		throw new MPEmptyResponseException('Daemon is offline');
+
+		if ($order->type() !== SteamOrder::class)
+			throw new \Exception('Execution is only valid for Steam orders');
+
 		$itemList = $request->input('items');
 
-		$duration = 3;
-
-		$response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido com ID #{$order->public_id} para VIP de {$duration} dias.", $itemList);
+		$response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido com ID #{$order->id} para \"{$order->reason}\"", $itemList);
 
 		$steamOrder = $order->orderable;
 
-		$steamOrder['encoded_items'] = json_encode($itemList);
+		$steamOrder->encoded_items = json_encode($itemList);
 
-		$steamOrder['tradeoffer_id'] = $response['id'];
-		$steamOrder['tradeoffer_state'] = $response['state'];
+		$steamOrder->tradeoffer_id = $response['id'];
+		$steamOrder->tradeoffer_state = $response['state'];
+		$steamOrder->tradeoffer_sent_at = Carbon::now();
 
 		$steamOrder->save();
 
-		// TODO: filter some shit?
 		return $response;
 		/*
 		 * {#241
@@ -92,13 +112,22 @@ class SteamOrderController extends Controller
 		 */
 	}
 
+	/**
+	 * @param $steamid
+	 *
+	 * @return static
+	 * @throws \Exception
+	 */
 	public function inventory($steamid)
 	{
 		$response = SteamAccount::getInventory($steamid);
 
 		$requestedItems = collect($response)->pluck('market_hash_name');
 
-		$requestedData = ShopItem::whereIn('market_hash_name', $requestedItems)->get();
+		if (SteamItem::count() === 0)
+			throw new \Exception('Empty SteamItem table, fill it...');
+
+		$requestedData = SteamItem::whereIn('market_hash_name', $requestedItems)->get();
 
 		$requestedData = collect($requestedData)->mapWithKeys(function ($item) {
 			return [$item['market_hash_name'] => $item];
@@ -125,7 +154,6 @@ class SteamOrderController extends Controller
 			];
 		});
 
-		// TODO: this API is not wrapped in a response object
 		return $response;
 	}
 }

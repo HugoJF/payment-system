@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Classes\MP2;
 use App\MPOrder;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -19,14 +18,14 @@ class MercadoPagoTest extends TestCase
 			'mp_amount'        => 5,
 			'mp_paid_amount'   => 0,
 			'mp_order_id'      => null,
-			'mp_order_status'  => null,
 		];
 	}
 
 	public function testMercadoPagoCanBeUsedToBuySomething()
 	{
-		MP2::fileMock('create_preference', 'create_preference');
-		MP2::fileMock('payments_search', 'payments_search');
+		MP2::startMocking();
+		MP2::mockByFile('create_preference', 'create_preference');
+		MP2::mockByFile('payments_search', 'payments_search');
 
 		$creation = $this->_testMPOrderCreation();
 		$this->_testMPOrderInitialization($creation);
@@ -46,9 +45,7 @@ class MercadoPagoTest extends TestCase
 
 	protected function _testMPOrderInitialization($creation)
 	{
-		$initialization = $this->get(route('orders.mp-init', $creation->json('public_id')));
-
-		dd($initialization->json());
+		$initialization = $this->get(route('orders.mp-init', $creation->json('id')));
 
 		$initialization->assertStatus(200);
 
@@ -61,7 +58,7 @@ class MercadoPagoTest extends TestCase
 
 	protected function _testMPOrderExecution($creation)
 	{
-		$execution = $this->get(route('orders.mp-execute', $creation->json('public_id')));
+		$execution = $this->get(route('orders.mp-execute', $creation->json('id')));
 
 		$this->assertDatabaseHas('mp_orders', array_merge($this->getMpOrderData(), [
 			'mp_paid_amount' => 5,

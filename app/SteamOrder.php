@@ -3,18 +3,20 @@
 namespace App;
 
 use App\Classes\SteamAccount;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Contracts\OrderContract;
 
 /**
  * @property integer tradeoffer_state
  * @property integer tradeoffer_id
+ * @property Carbon  tradeoffer_sent_at
  */
 class SteamOrder extends Model implements OrderContract
 {
 	protected $table = 'steam_orders';
 
-	public $aliases = ['Steam', 'SteamOrder'];
+	protected $dates = ['tradeoffer_sent_at'];
 
 	/**********
 	 * STATES *
@@ -39,6 +41,16 @@ class SteamOrder extends Model implements OrderContract
 	public function base()
 	{
 		return $this->morphOne('App\Order', 'orderable');
+	}
+
+	/********************
+	 * CUSTOM FUNCTIONS *
+	 ********************/
+
+	public function cancel()
+	{
+		SteamAccount::cancelTradeOffer($this->tradeoffer_id);
+		$this->recheck();
 	}
 
 	/**************

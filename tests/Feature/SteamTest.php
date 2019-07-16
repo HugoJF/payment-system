@@ -1,29 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Hugo
- * Date: 5/16/2019
- * Time: 3:08 PM
- */
 
 namespace Tests\Feature;
 
 use App\Classes\SteamAccount;
 use App\SteamOrder;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class SteamTest extends TestCase
 {
-
 	private $creation;
 
 	public function testSteamCanBeUsedToBuySomething()
 	{
-		SteamAccount::fileMock('getTradeOffer', 'getTradeOffer');
-		SteamAccount::fileMock('inventory', 'inventory');
-		SteamAccount::fileMock('sendTradeOffer', 'sendTradeOffer');
+		SteamAccount::startMocking();
+		SteamAccount::mockByFile('getTradeOffer', 'getTradeOffer');
+		SteamAccount::mockByFile('inventory', 'inventory');
+		SteamAccount::mockByFile('sendTradeOffer', 'sendTradeOffer');
 
 		$this->_testStOrderCreation();
 		$this->_testStOrderInitialization();
@@ -42,7 +34,7 @@ class SteamTest extends TestCase
 
 	protected function _testStOrderInitialization()
 	{
-		$initialization = $this->get(route('orders.steam-init', $this->creation->json('public_id')));
+		$initialization = $this->get(route('orders.steam-init', $this->creation->json('id')));
 
 		$initialization->assertStatus(200);
 
@@ -54,7 +46,7 @@ class SteamTest extends TestCase
 
 	protected function _testStOrderExecution()
 	{
-		$execution = $this->post(route('orders.steam-execute', $this->creation->json('public_id')), $this->getSteamData());
+		$execution = $this->post(route('orders.steam-execute', $this->creation->json('id')), $this->getSteamData());
 
 		$execution->assertStatus(200);
 
@@ -68,12 +60,12 @@ class SteamTest extends TestCase
 	protected function _testStOrderExecuted()
 	{
 		$this->artisan('steamorders:refresh');
-		$executed = $this->get(route('orders.show', $this->creation->json('public_id')));
+		$executed = $this->get(route('orders.show', $this->creation->json('id')));
 
 		$executed->assertStatus(200);
 
 		$this->assertDatabaseHas('steam_orders', [
-			'tradeoffer_id' => 3571498682,
+			'tradeoffer_id'    => 3571498682,
 			'tradeoffer_state' => SteamOrder::ACCEPTED,
 		]);
 	}
