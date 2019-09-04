@@ -1,89 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d5a98933-35ee-4e34-8366-c6d1e3562fab" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/resources/js/app.js" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/payment-system.iml" afterPath="$PROJECT_DIR$/.idea/payment-system.iml" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" afterPath="$PROJECT_DIR$/.idea/php.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/Classes/MP2.php" afterPath="$PROJECT_DIR$/app/Classes/MP2.php" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/RefreshActiveSteamOrders.php" afterPath="$PROJECT_DIR$/app/Console/Commands/RefreshActiveSteamOrders.php" />
-      <change beforePath="$PROJECT_DIR$/app/Contracts/OrderContract.php" afterPath="$PROJECT_DIR$/app/Contracts/OrderContract.php" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/MPEmptyResponseException.php" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/MPResponseException.php" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/PayPalCommunicationException.php" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/PayPalNoPayerIdException.php" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/PayPalNoTransactionIdException.php" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MPOrderController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/MPOrderController.php" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/OrderController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/OrderController.php" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PayPalOrderController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/PayPalOrderController.php" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SteamOrderController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/SteamOrderController.php" />
-      <change beforePath="$PROJECT_DIR$/app/MPOrder.php" afterPath="$PROJECT_DIR$/app/MPOrder.php" />
-      <change beforePath="$PROJECT_DIR$/app/Order.php" afterPath="$PROJECT_DIR$/app/Order.php" />
-      <change beforePath="$PROJECT_DIR$/app/PayPalOrder.php" afterPath="$PROJECT_DIR$/app/PayPalOrder.php" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" />
-      <change beforePath="$PROJECT_DIR$/app/SteamOrder.php" afterPath="$PROJECT_DIR$/app/SteamOrder.php" />
-      <change beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" afterPath="$PROJECT_DIR$/composer.lock" />
-      <change beforePath="$PROJECT_DIR$/config/steam.php" afterPath="$PROJECT_DIR$/config/steam.php" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_04_30_231550_create_orders_table.php" afterPath="$PROJECT_DIR$/database/migrations/2019_04_30_231550_create_orders_table.php" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_04_30_231714_create_mp_orders_table.php" afterPath="$PROJECT_DIR$/database/migrations/2019_04_30_231714_create_mp_orders_table.php" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_04_30_231734_create_paypal_orders_table.php" afterPath="$PROJECT_DIR$/database/migrations/2019_04_30_231734_create_paypal_orders_table.php" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" afterPath="$PROJECT_DIR$/package-lock.json" />
-      <change beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change beforePath="$PROJECT_DIR$/public/js/app.js" afterPath="$PROJECT_DIR$/public/js/app.js" />
-      <change beforePath="$PROJECT_DIR$/public/mix-manifest.json" afterPath="$PROJECT_DIR$/public/mix-manifest.json" />
-      <change beforePath="$PROJECT_DIR$/resources/js/actions/Auth.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/actions/Inventory.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/actions/Order.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/actions/UI.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/actions/helpers.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/app.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/App.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/PaymentMethodSelector.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/PendingTradeoffer.tsx" afterPath="$PROJECT_DIR$/resources/js/components/PendingTradeoffer.js" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderContainer.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderError.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderPending.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderSkeleton.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderState.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderSuccess.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/order-components/OrderSummary.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/orders/MPOrder.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/orders/PayPalOrder.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/orders/SteamOrder.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/svg/Check.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/svg/Cross.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/svg/Loading.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/Avatar.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/Badge.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/Button.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/Container.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/Dots.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/ErrorBoundary.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/Inventory.tsx" afterPath="$PROJECT_DIR$/resources/js/components/ui/Inventory.js" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/InventoryHud.tsx" afterPath="$PROJECT_DIR$/resources/js/components/ui/InventoryHud.js" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/NotFound.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/SteamItem.tsx" afterPath="$PROJECT_DIR$/resources/js/components/ui/SteamItem.js" />
-      <change beforePath="$PROJECT_DIR$/resources/js/constants/ActionTypes.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/constants/Routes.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/constants/Types.ts" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/constants/helpers.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/constants/history.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/constants/variables.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/flags/Flags.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/normalizr/normalizr.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/reducers/auth.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/reducers/index.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/reducers/inventory.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/reducers/orders.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/js/reducers/ui.tsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/resources/views/reference.blade.php" afterPath="$PROJECT_DIR$/resources/views/reference.blade.php" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" afterPath="$PROJECT_DIR$/routes/api.php" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" afterPath="$PROJECT_DIR$/routes/web.php" />
-      <change beforePath="$PROJECT_DIR$/webpack.mix.js" afterPath="$PROJECT_DIR$/webpack.mix.js" />
-    </list>
+    <list default="true" id="d5a98933-35ee-4e34-8366-c6d1e3562fab" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -126,11 +44,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AppServiceProvider.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AppServiceProvider.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-517">
-              <caret line="15" column="19" lean-forward="true" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
+            <state relative-caret-position="945">
+              <caret line="46" column="57" lean-forward="true" selection-start-line="46" selection-start-column="57" selection-end-line="46" selection-end-column="57" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OrderApiController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OrderApiController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="680">
+              <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -194,20 +122,6 @@
                 <marker date="1563499376652" expanded="true" signature="1317:1322" ph="..." />
                 <marker date="1563499376652" expanded="true" signature="1738:1772" ph="..." />
                 <marker date="1563499376652" expanded="true" signature="1856:1892" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="avatar.blade.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/avatar.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="9" column="41" lean-forward="false" selection-start-line="9" selection-start-column="41" selection-end-line="9" selection-end-column="41" />
-              <folding>
-                <marker date="1563499763135" expanded="true" signature="9:45" ph="..." />
-                <marker date="1563499763135" expanded="true" signature="259:278" ph="..." />
-                <marker date="1563499763135" expanded="true" signature="335:347" ph="..." />
               </folding>
             </state>
           </provider>
@@ -849,12 +763,12 @@
       <workItem from="1563673489619" duration="1107000" />
       <workItem from="1567106227208" duration="5268000" />
       <workItem from="1567382697735" duration="4197000" />
-      <workItem from="1567637094260" duration="795000" />
+      <workItem from="1567637094260" duration="1265000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="315009000" />
+    <option name="totallyTimeSpent" value="315479000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1130,13 +1044,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OrderApiController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="11" column="57" lean-forward="false" selection-start-line="11" selection-start-column="57" selection-end-line="11" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/database/migrations/2019_04_30_231550_create_orders_table.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="850">
@@ -1332,8 +1239,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-517">
-          <caret line="15" column="19" lean-forward="true" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
+        <state relative-caret-position="945">
+          <caret line="46" column="57" lean-forward="true" selection-start-line="46" selection-start-column="57" selection-end-line="46" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OrderApiController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
           <folding />
         </state>
       </provider>
