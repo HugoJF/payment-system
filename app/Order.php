@@ -6,28 +6,17 @@ use App\Contracts\OrderContract;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property integer       $preset_amount
- * @property integer       $unit_price
- * @property integer       $unit_price_limit
- * @property string        $avatar
- * @property string        id
- * @property string        $return_url
- * @property string        $cancel_url
- * @property mixed         $reason
- * @property OrderContract $orderable
- * @property string        payer_tradelink
- * @property integer       recheck_attempts
- * @property Carbon        updated_at
- * @property Carbon        created_at
- */
 class Order extends Model implements OrderContract
 {
+	public const PAYPAL = 'paypal';
+	public const MERCADOPAGO = 'mp';
+	public const STEAM = 'steam';
+
 	public $incrementing = false;
 
 	protected $with = ['orderable'];
 
-	protected $appends = ['paid', 'type'];
+	protected $appends = ['units', 'paid_units', 'paid', 'type', 'init_point'];
 
 	protected $fillable = [
 		'reason',
@@ -51,17 +40,56 @@ class Order extends Model implements OrderContract
 		return $this->morphTo();
 	}
 
+	public function getPaidUnitsAttribute()
+	{
+		$this->paidUnits($this);
+	}
+
+	public function getUnitsAttribute()
+	{
+		$this->units($this);
+	}
+
 	public function getPaidAttribute()
 	{
 		return $this->paid();
 	}
 
+	public function getTypeAttribute()
+	{
+		return $this->type();
+	}
+
+	public function getInitPointAttribute()
+	{
+		return route('orders.show', $this);
+	}
+
+	public function canInit($type)
+	{
+		/** @var OrderService $service */
+		$service = app(OrderService::class);
+
+		$class = $service->getClassByType($type);
+
+		if ($class) {
+			$c = app($class);
+
+			return $c->canInit($this);
+		} else {
+			return false;
+		}
+	}
+
 	public function recheck()
 	{
-		if ($this->orderable)
+		if ($this->orderable) {
+			$this->increment('recheck_attempts');
+
 			return $this->orderable->recheck();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	public function paid()
@@ -80,16 +108,29 @@ class Order extends Model implements OrderContract
 			return false;
 	}
 
-	public function getTypeAttribute()
-	{
-		return $this->type();
-	}
-
 	public function type()
 	{
 		if ($this->orderable)
 			return $this->orderable->type();
 		else
 			return false;
+	}
+
+	public function units(Order $order)
+	{
+		if ($this->orderable) {
+			return $this->orderable->units($order);
+		} else {
+			return false;
+		}
+	}
+
+	public function paidUnits(Order $order)
+	{
+		if ($this->orderable) {
+			return $this->orderable->paidUnits($order);
+		} else {
+			return false;
+		}
 	}
 }

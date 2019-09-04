@@ -6,6 +6,7 @@ use App\Classes\SteamAccount;
 use App\Classes\SteamID;
 use App\Exceptions\MPEmptyResponseException;
 use App\Order;
+use App\Services\SteamOrderService;
 use App\SteamItem;
 use App\SteamOrder;
 use Carbon\Carbon;
@@ -14,146 +15,58 @@ use Illuminate\Http\Request;
 class SteamOrderController extends Controller
 {
 	/**
-	 * @param Order $order
+	 * @param SteamOrderService $service
+	 * @param Order             $order
 	 *
 	 * @return Order
 	 * @throws \Exception
 	 */
-	public function init(Order $order)
+	public function init(SteamOrderService $service, Order $order)
 	{
-		// If this order is already initialized, return existing preference
-		if ($order->orderable && $order->type() !== SteamOrder::class)
-			throw new \Exception('You cannot reinitialize an order');
-		else if ($order->orderable)
-			return $order;
-
-		// Check for tradelink
 		if (empty($order->payer_tradelink))
 			throw new \Exception('Unable to initialize order with Steam because it\'s missing the tradelink');
 
-		/** @var SteamOrder $steamOrder */
-		$steamOrder = SteamOrder::create();
+		$service->initialize($order);
 
-		$steamOrder->base()->save($order);
-
-		$order->save();
-		$steamOrder->save();
-
-		return $order;
+		return redirect()->route('orders.show', $order);
 	}
 
-	public function execute(Request $request, Order $order)
+	public function execute(SteamOrderService $service, Request $request, Order $order)
 	{
-		throw new MPEmptyResponseException('Daemon is offline');
+		$rawItems = collect($request->input('items'));
 
-		if ($order->type() !== SteamOrder::class)
-			throw new \Exception('Execution is only valid for Steam orders');
+		// Decode items (they are passed as strings)
+		$items = $rawItems->map(function ($item) {
+			return json_decode($item, true);
+		})->toArray();
 
-		$itemList = $request->input('items');
+		$service->execute($order, $items);
 
-		$response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido com ID #{$order->id} para \"{$order->reason}\"", $itemList);
-
-		$steamOrder = $order->orderable;
-
-		$steamOrder->encoded_items = json_encode($itemList);
-
-		$steamOrder->tradeoffer_id = $response['id'];
-		$steamOrder->tradeoffer_state = $response['state'];
-		$steamOrder->tradeoffer_sent_at = Carbon::now();
-
-		$steamOrder->save();
-
-		return $response;
-		/*
-		 * {#241
-			  +"partner": {#247
-				+"universe": 1
-				+"type": 1
-				+"instance": 1
-				+"accountid": 73018255
-			  }
-			  +"id": "3557089384"
-			  +"message": "Pedido com ID #5623b para VIP de 3 dias."
-			  +"state": 2
-			  +"itemsToGive": []
-			  +"itemsToReceive": array:3 [
-				0 => {#252
-				  +"id": "14835802004"
-				  +"assetid": "14835802004"
-				  +"appid": 730
-				  +"contextid": "2"
-				  +"amount": 1
-				}
-				1 => {#250
-				  +"id": "4618852404"
-				  +"assetid": "4618852404"
-				  +"appid": 730
-				  +"contextid": "2"
-				  +"amount": 1
-				}
-				2 => {#251
-				  +"id": "4618852773"
-				  +"assetid": "4618852773"
-				  +"appid": 730
-				  +"contextid": "2"
-				  +"amount": 1
-				}
-			  ]
-			  +"isOurOffer": true
-			  +"created": "2019-05-03T06:37:14.559Z"
-			  +"updated": "2019-05-03T06:37:14.559Z"
-			  +"expires": "2019-05-17T06:37:14.559Z"
-			  +"tradeID": null
-			  +"fromRealTimeTrade": false
-			  +"confirmationMethod": 0
-			  +"escrowEnds": null
-			  +"rawJson": ""
-			}
-		 */
+		return redirect()->route('orders.show', $order);
 	}
 
-	/**
-	 * @param $steamid
-	 *
-	 * @return static
-	 * @throws \Exception
-	 */
-	public function inventory($steamid)
+	public function show(SteamOrderService $service, Order $order)
 	{
-		$response = SteamAccount::getInventory($steamid);
+		if ($order->status() === SteamOrder::ACCEPTED)
+			return view('orders.order-success', compact('order'));
 
-		$requestedItems = collect($response)->pluck('market_hash_name');
+		if ($order->status() === SteamOrder::ACTIVE) {
+			$tradeofferId = $order->orderable->tradeoffer_id;
 
-		if (SteamItem::count() === 0)
-			throw new \Exception('Empty SteamItem table, fill it...');
+			return view('orders.order-pending', compact('order', 'tradeofferId'));
+		}
 
-		$requestedData = SteamItem::whereIn('market_hash_name', $requestedItems)->get();
+		if (!$order->orderable->tradeoffer_sent_at) {
+			$items = $service->getInventory($order->payer_steam_id);
 
-		$requestedData = collect($requestedData)->mapWithKeys(function ($item) {
-			return [$item['market_hash_name'] => $item];
-		});
+			return view('inventory', [
+				'color' => 'blue',
+				'width' => 'w-1/2',
+				'items' => $items,
+				'order' => $order,
+			]);
+		}
 
-		$itemsArray = $requestedData->toArray();
-
-		$response = collect($response)->reject(function ($item) use ($itemsArray, $requestedData) {
-			return !array_key_exists($item['market_hash_name'], $itemsArray) ||
-				$requestedData[ $item['market_hash_name'] ]->price < 0;
-		});
-
-		$response = collect($response)->map(function ($item) use ($requestedData) {
-			$i = $requestedData[ $item['market_hash_name'] ];
-
-			return [
-				'appid'            => $item['appid'],
-				'contextid'        => $item['contextid'],
-				'assetid'          => $item['assetid'],
-				'instanceid'       => $item['instanceid'],
-				'market_hash_name' => $item['market_hash_name'],
-				'price'            => $i->price,
-				'icon_url'         => $i->icon_url,
-			];
-		});
-
-		return $response;
+		return view('orders.order-error', compact('order'));
 	}
 }

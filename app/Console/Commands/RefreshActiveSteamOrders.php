@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\TradeofferUpdated;
 use App\Order;
 use App\SteamOrder;
 use Illuminate\Console\Command;
@@ -71,6 +72,8 @@ class RefreshActiveSteamOrders extends Command
 			$order->cancel();
 			$this->warn('Cancelling order #' . $order->base->id . ' as it expired!');
 		}
+
+		event(new TradeofferUpdated($order));
 	}
 
 	protected function tradeShouldBeCanceled(SteamOrder $order)

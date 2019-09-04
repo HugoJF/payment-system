@@ -23,12 +23,13 @@ class CreateOrdersTable extends Migration
 			$table->string('product_name_singular')->nullable();
 			$table->string('product_name_plural')->nullable();
 
-			$table->string('avatar');
+			$table->string('avatar')->nullable();
 
 			$table->string('payer_steam_id')->nullable();
 			$table->string('payer_tradelink')->nullable();
 
 			$table->unsignedInteger('preset_amount');
+			$table->unsignedInteger('paid_amount')->default(0);
 
 			$table->unsignedInteger('unit_price');
 			$table->unsignedInteger('unit_price_limit');

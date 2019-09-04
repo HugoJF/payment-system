@@ -2,24 +2,11 @@
 
 namespace App;
 
-use App\Classes\MercadoPago;
 use App\Classes\MP2;
 use App\Contracts\OrderContract;
-use App\Exceptions\MPEmptyResponseException;
-use App\Exceptions\MPResponseException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-/**
- * @property Order   base
- *
- * @property integer id
- * @property integer mp_paid_amount
- * @property string  mp_order_status
- * @property integer mp_order_id
- * @property string  mp_preference_id
- * @property integer mp_amount
- */
 class MPOrder extends Model implements OrderContract
 {
 	protected $table = 'mp_orders';
@@ -38,12 +25,14 @@ class MPOrder extends Model implements OrderContract
 	 **************/
 
 	/**
+	 * @throws MPEmptyResponseException
+	 * @throws MPResponseException
 	 * @throws \Exception - if API response was invalid
 	 */
 	public function recheck()
 	{
-		if (empty($this->mp_order_id)) {
-			Log::warning("Rechecking MPOrder {$this->id} without 'mp_order_id'.");
+		if (empty($this->order_id)) {
+			Log::warning("Rechecking MPOrder {$this->id} without 'order_id'.");
 			$this->searchForPayments();
 
 			return;
@@ -52,22 +41,22 @@ class MPOrder extends Model implements OrderContract
 		// Order checking is deprecated as it's somewhat inconsistent (and requires more requests)
 
 		// Query API for information
-		$order = MP2::get('merchant_orders', $this->mp_order_id);
+		$order = MP2::get('merchant_orders', $this->order_id);
 
 		if (!is_array($order))
-			throw new MPResponseException('Non array response returned');
+			throw new \Exception('Non array response returned');
 
 		// Check if response was valid
 		if (!array_key_exists('status', $order))
-			throw new MPEmptyResponseException('MercadoPago API returned empty response without status.');
+			throw new \Exception('MercadoPago API returned empty response without status.');
 
 		// Check if response was OK
 		if ($order['status'] != 200)
-			throw new MPResponseException("MercadoPago API returned with status: {$order['status']}");
+			throw new \Exception("MercadoPago API returned with status: {$order['status']}");
 
 		// Check if we have a response
 		if (!array_key_exists('response', $order) || empty($order['response']))
-			throw new MPEmptyResponseException("MercadoPago API returned empty response");
+			throw new \Exception("MercadoPago API returned empty response");
 
 		// Keep response reference
 		$response = $order['response'];
@@ -78,27 +67,29 @@ class MPOrder extends Model implements OrderContract
 				return $total;
 			}
 
-			return $total + round($item['total_paid_amount']);
+			return $total + round($item['total_paid_amount'], 2);
 		}, 0);
 
 		// Update preference ID if it's not present
-		if (empty($this->mp_preference_id))
-			$this->mp_preference_id = $response['preference_id'];
+		if (empty($this->preference_id))
+			$this->preference_id = $response['preference_id'];
 
 		// Update order status
-		$this->mp_paid_amount = $paidAmount;
+		$this->paid_amount = $paidAmount;
+
+		// Update base order
+		$this->base->paid_amount = round($paidAmount * 100);
+		$this->base->save();
 
 		// Save
 		$this->touch();
 		$this->save();
 
 		// Log
-		Log::info("Order rechecked with total paid amount: R$ {$this->original['mp_paid_amount']} -> R$ {$this->mp_paid_amount}");
+		Log::info("Order rechecked with total paid amount: R$ {$this->original['paid_amount']} -> R$ {$this->paid_amount}");
 	}
 
 	/**
-	 * @throws MPEmptyResponseException
-	 * @throws MPResponseException
 	 * @throws \Exception
 	 */
 	protected function searchForPayments()
@@ -128,12 +119,9 @@ class MPOrder extends Model implements OrderContract
 
 		$orders = $results->pluck('order.id');
 
-		if ($orders->count() > 1)
-			throw new \Exception('Found multiple orders for the same external reference.', ['orders' => $orders]);
-
 		// If there
 		if ($orders->count() === 1)
-			$this->mp_order_id = $orders->first();
+			$this->order_id = $orders->first();
 
 		// Sum approved payments
 		$paidAmount = $results->reduce(function ($paid, $payment) {
@@ -144,14 +132,14 @@ class MPOrder extends Model implements OrderContract
 		}, 0);
 
 		// Update order
-		$this->mp_paid_amount = $paidAmount;
+		$this->paid_amount = $paidAmount;
 
 		$this->save();
 	}
 
 	public function paid()
 	{
-		return $this->mp_paid_amount >= $this->mp_amount;
+		return $this->paid_amount >= $this->amount;
 	}
 
 	public function status()
@@ -162,5 +150,20 @@ class MPOrder extends Model implements OrderContract
 	public function type()
 	{
 		return self::class;
+	}
+
+	public function canInit(Order $order)
+	{
+		return true;
+	}
+
+	public function units(Order $order)
+	{
+		return null;
+	}
+
+	public function paidUnits(Order $order)
+	{
+		return null;
 	}
 }

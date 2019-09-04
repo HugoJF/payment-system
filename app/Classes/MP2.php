@@ -7,6 +7,11 @@ class MP2 extends MockableWrapper
 	public static $folder = 'mp';
 	public static $exceptionWhenMockIsNotFound = false;
 
+	public static function _get($type, $url)
+	{
+		return \MP::get('/' . $type . '/' . $url);
+	}
+
 	public static function _create_preference($preference)
 	{
 		return \MP::create_preference($preference);
@@ -22,8 +27,8 @@ class MP2 extends MockableWrapper
 		return self::get('v1', "payments/search?$key=$value");
 	}
 
-	public static function _get($type, $url)
+	public static function _get_preference($id)
 	{
-		return \MP::get('/' . $type . '/' . $url);
+		return self::get('checkout', "preferences/$id");
 	}
 }

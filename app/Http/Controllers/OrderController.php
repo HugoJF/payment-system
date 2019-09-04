@@ -2,48 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrderRequest;
 use App\Order;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\OrderService;
 
 class OrderController extends Controller
 {
-	public function store(Request $request)
+	/**
+	 * @param OrderService $service
+	 * @param Order        $order
+	 * @param              $type
+	 *
+	 * @return mixed
+	 */
+	public function init(OrderService $service, Order $order, $type)
 	{
-		$validation = Validator::make($request->all(), [
-			'reason'                => 'required',
-			'return_url'            => 'required',
-			'cancel_url'            => 'required',
-			'preset_amount'         => 'required|numeric',
-			'unit_price'            => 'required|numeric',
-			'unit_price_limit'      => 'required|numeric',
-			'discount_per_unit'     => 'required|numeric',
-			'min_units'             => 'required|numeric',
-			'max_units'             => 'required|numeric',
-			'payer_steam_id'        => 'string',
-			'avatar'                => 'string',
-			'payer_tradelink'       => 'string|nullable',
-			'product_name_singular' => 'string|nullable',
-			'product_name_plural'   => 'string|nullable',
-		]);
+		$controller = $service->getControllerByType($type);
 
-		// Check if request has every required field
-		if ($validation->fails())
-			return response($validation->errors()->toArray(), 400);
+		// Check for reinitialization
+		if ($order->orderable_id)
+			return redirect()->route('orders.show', $order);
 
-		// Prepare database row
-		$order = Order::make();
-
-		$order->fill($validation->validated());
-
-		$order->save();
-
-		// Return details
-		return $order;
+		// Forward controller call
+		return app()->call("$controller@init", compact('order'));
 	}
 
-	public function show(Order $order)
+	public function show(OrderService $service, Order $order, $action = null)
 	{
-		return $order;
+		$type = $order->type();
+
+		if (!$type)
+			return view('payment-selector', compact('order'));
+
+		$controller = $service->getControllerByClass($type);
+
+		// Already pre recheck
+		if (!$order->paid())
+			$order->recheck();
+
+		return app()->call("$controller@show", compact('order', $action));
 	}
 }

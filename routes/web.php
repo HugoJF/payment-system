@@ -11,54 +11,38 @@
 |
 */
 
-Route::get('reference', function () {
-	return view('reference');
-});
-
-Route::get('orderss/{order}', 'OrderController@show');
-
-Route::get('preference/{preference}', function ($preference) {
-	dd(App\Classes\MP2::get('checkout', 'preferences/' . $preference));
-});
-
-Route::get('search/{id}', function ($id) {
-	$response = App\Classes\MP2::get('v1', 'payments/search?external_reference=' . $id);
-
-	$a = collect($response['response']['results']);
-
-	$b  = $a->pluck('transaction_amount');
-	$c = $b->sum();
-	return round($c * 100, 2);
-});
-
 Route::get('create-order', function () {
 	$order = \App\Order::make();
 
-	$order->public_id = substr(md5(microtime(true)), 0, 5);
+	$order->id = substr(md5(microtime(true)), 0, 5);
 
 	$order->reason = 'VIPzão bonito do servidor do de_nerd';
 	$order->return_url = 'https://denerdtv.com';
 	$order->cancel_url = 'https://denerdtv.com/';
-		$order->preset_amount = 465;
+	$order->preset_amount = 465;
+
+	$order->avatar = 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/45/45be9bd313395f74762c1a5118aee58eb99b4688_full.jpg';
 
 	$order->payer_steam_id = '76561198033283983';
 	$order->payer_tradelink = 'https://steamcommunity.com/tradeoffer/new/?partner=73018255&token=iFVJ4YIQ';
 
-	$order->unit_price = 35;
-	$order->unit_price_limit = 20;
-	$order->discount_per_unit = 0.26;
-	$order->min_units = 15;
-	$order->max_units = 90;
+	$order->unit_price = 10;
+	$order->unit_price_limit = 5;
+	$order->discount_per_unit = 0.25;
+	$order->min_units = 1;
+	$order->max_units = 900;
 
 	$order->save();
 
-	return redirect(url('/orders/' . $order->public_id));
+	return redirect()->route('orders.show', $order);
+	//	dd($order->toArray());
 });
 
-Route::get('{all?}', function () {
-	return view('home');
-})->where('all', '([A-z\d\-\/_.]+)?');
+Route::get('orders/{order}/init/{type}', 'OrderController@init')->name('orders.paypal.init');
+Route::get('orders/{order}/init/paypal', 'OrderController@init')->name('orders.paypal.init');
+Route::get('orders/{order}/init/mp', 'OrderController@init')->name('orders.mp.init');
+Route::get('orders/{order}/init/steam', 'OrderController@init')->name('orders.steam.init');
 
-Route::get('/', function () {
-	return view('welcome');
-});
+Route::post('orders/{order}/steam/execute', 'SteamOrderController@execute')->name('orders.steam.execute');
+
+Route::get('orders/{order}/{action?}', 'OrderController@show')->name('orders.show');

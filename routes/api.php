@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-	return $request->user();
-});
-
 // TODO: add IPN controllers
 Route::get('ipn/mercadopago', function () {
 	return 'true';
@@ -32,21 +28,8 @@ Route::get('paypal/cancel', function () {
 
 Route::prefix('v1')->group(function () {
 	Route::prefix('orders')->name('orders.')->group(function () {
-		Route::get('{order}', 'OrderController@show')->name('show');
+		Route::get('{order}', 'OrderApiController@show')->name('show');
 
-		Route::post('/', 'OrderController@store')->name('store');
-
-		Route::post('{order}/mercadopago', 'MPOrderController@init')->name('mp-init');
-		Route::patch('{order}/mercadopago/execute', 'MPOrderController@execute')->name('mp-execute');
-
-		Route::post('{order}/paypal', 'PayPalOrderController@init')->name('paypal-init');
-		Route::patch('{order}/paypal/execute', 'PayPalOrderController@execute')->name('paypal-execute');
-
-		Route::post('{order}/steam', 'SteamOrderController@init')->name('steam-init');
-		Route::patch('{order}/steam/execute', 'SteamOrderController@execute')->name('steam-execute');
-	});
-
-	Route::prefix('steam')->group(function () {
-		Route::get('inventory/{steamid}', 'SteamOrderController@inventory')->name('inventory');
+		Route::post('/', 'OrderApiController@store')->name('store');
 	});
 });

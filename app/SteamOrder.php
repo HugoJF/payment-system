@@ -3,6 +3,8 @@
 namespace App;
 
 use App\Classes\SteamAccount;
+use App\Events\TradeofferUpdated;
+use App\Services\SteamOrderService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Contracts\OrderContract;
@@ -17,6 +19,10 @@ class SteamOrder extends Model implements OrderContract
 	protected $table = 'steam_orders';
 
 	protected $dates = ['tradeoffer_sent_at'];
+
+	protected $casts = [
+		'items' => 'array',
+	];
 
 	/**********
 	 * STATES *
@@ -59,10 +65,18 @@ class SteamOrder extends Model implements OrderContract
 
 	public function recheck()
 	{
+		if (!isset($this->tradeoffer_id))
+			return;
+
 		$offer = SteamAccount::getTradeOffer($this->tradeoffer_id);
 
-		if ($offer && array_key_exists('state', $offer)) {
+		if ($offer && array_key_exists('state', $offer))
 			$this->tradeoffer_state = $offer['state'];
+
+		if ($this->paid()) {
+			$service = app(SteamOrderService::class);
+			$this->paid_amount = $service->getItemsValue($this->items);
+			$this->save();
 		}
 
 		$this->touch();
@@ -86,4 +100,37 @@ class SteamOrder extends Model implements OrderContract
 	{
 		return self::class;
 	}
+
+	public function canInit(Order $order)
+	{
+		return isset($order->payer_tradelink);
+	}
+
+	public function units(Order $base)
+	{
+		return $this->calculateUnits($base, $base->preset_amount);
+	}
+
+	public function paidUnits(Order $base)
+	{
+		return $this->calculateUnits($base, $base->paid_amount);
+	}
+
+	protected function calculateUnits(Order $base, $value)
+	{
+		$perUnit = $base->unit_price;
+		$units = 0;
+
+		while ($value >= $perUnit) {
+			$units++;
+			$value -= $perUnit;
+			$perUnit -= $base->discount_per_unit;
+
+			if ($perUnit < $base->unit_price_limit)
+				$perUnit = $base->unit_price_limit;
+		}
+
+		return $units;
+	}
+
 }

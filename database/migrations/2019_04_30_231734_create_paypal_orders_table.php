@@ -17,6 +17,7 @@ class CreatePayPalOrdersTable extends Migration
             $table->bigIncrements('id');
 
 			$table->string('token')->nullable();
+			$table->string('link')->nullable();
 			$table->string('transaction_id')->nullable();
 			$table->string('status')->nullable();
 

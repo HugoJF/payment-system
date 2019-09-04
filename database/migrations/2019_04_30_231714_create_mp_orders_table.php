@@ -16,12 +16,12 @@ class CreateMPOrdersTable extends Migration
         Schema::create('mp_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-			$table->string('mp_preference_id');
+			$table->string('preference_id');
 
-			$table->unsignedInteger('mp_amount')->default(0);
-			$table->unsignedInteger('mp_paid_amount')->default(0);
+			$table->unsignedInteger('amount')->default(0);
+			$table->unsignedInteger('paid_amount')->default(0);
 
-			$table->integer('mp_order_id')->unsigned()->nullable();
+			$table->integer('order_id')->unsigned()->nullable();
 
             $table->timestamps();
         });
