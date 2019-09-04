@@ -40,6 +40,6 @@ class OrderController extends Controller
 		if (!$order->paid())
 			$order->recheck();
 
-		return app()->call("$controller@show", compact('order', $action));
+		return app()->call("$controller@show", compact('order', 'action'));
 	}
 }
