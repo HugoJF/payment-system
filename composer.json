@@ -15,6 +15,7 @@
         "laravel/tinker": "^1.0",
         "livepixel/mercado-pago": "^1.0",
         "pusher/pusher-php-server": "^4.0",
+        "sentry/sentry-laravel": "1.2.0",
         "srmklive/paypal": "~1.0"
     },
     "require-dev": {

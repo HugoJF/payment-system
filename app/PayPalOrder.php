@@ -67,7 +67,7 @@ class PayPalOrder extends Model implements OrderContract
 
 		// Update base order
 		if ($this->paid()) {
-			$this->base->paid_amount = $this->preset_amount;
+			$this->base->paid_amount = $this->base->preset_amount;
 			$this->base->save();
 		}
 
