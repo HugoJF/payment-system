@@ -36,7 +36,7 @@ class SteamOrderService
 
 		// Update order details
 		$steamOrder = $order->orderable;
-		$steamOrder->items = (array) $items;
+		$steamOrder->encoded_items = json_encode((array) $items);
 		$steamOrder->tradeoffer_id = $response['id'];
 		$steamOrder->tradeoffer_state = $response['state'];
 		$steamOrder->tradeoffer_sent_at = Carbon::now();
