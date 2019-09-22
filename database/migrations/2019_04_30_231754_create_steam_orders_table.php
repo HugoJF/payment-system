@@ -16,7 +16,7 @@ class CreateSteamOrdersTable extends Migration
         Schema::create('steam_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-			$table->json('items')->nullable();
+			$table->longText('encoded_items')->nullable();
 
 			$table->bigInteger('tradeoffer_id')->unsigned()->nullable();
 			$table->integer('tradeoffer_state')->unsigned()->nullable();
