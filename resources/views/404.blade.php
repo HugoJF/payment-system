@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app')
 
 @section('content')
     <div class="flex flex-col mt-12 h-64 p-4 justify-center items-center sm:p-6">

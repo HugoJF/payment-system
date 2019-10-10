@@ -3,7 +3,7 @@
         $state = 'CANCELADO';
 @endphp
 
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
     <div class="flex flex-col p-4 justify-center items-center sm:p-6">

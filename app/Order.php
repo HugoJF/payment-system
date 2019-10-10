@@ -119,7 +119,7 @@ class Order extends Model implements OrderContract
 	public function units(Order $order)
 	{
 		if ($this->orderable) {
-			return $this->orderable->units($order);
+			return $this->orderable->units($this);
 		} else {
 			return false;
 		}
@@ -128,7 +128,7 @@ class Order extends Model implements OrderContract
 	public function paidUnits(Order $order)
 	{
 		if ($this->orderable) {
-			return $this->orderable->paidUnits($order);
+			return $this->orderable->paidUnits($this);
 		} else {
 			return false;
 		}

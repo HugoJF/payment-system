@@ -19,3 +19,20 @@ Route::get('orders/{order}/init/steam', 'OrderController@init')->name('orders.st
 Route::post('orders/{order}/steam/execute', 'SteamOrderController@execute')->name('orders.steam.execute');
 
 Route::get('orders/{order}/{action?}', 'OrderController@show')->name('orders.show');
+
+Auth::routes();
+
+
+Route::middleware(['admin'])->prefix('admin')->group(function () {
+
+	Route::get('/home', 'HomeController@home')->name('admin.home');
+	Route::get('/', 'HomeController@index')->name('admin.index');
+
+	Route::get('orders', 'HomeController@orders')->name('admin.orders');
+
+	Route::get('orders/{order}', 'HomeController@show')->name('admin.orders.show');
+	Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
+
+	Route::patch('orders/{order}', 'homeController@update')->name('admin.orders.update');
+
+});

@@ -16,6 +16,8 @@ class PayPalOrder extends Model implements OrderContract
 {
 	protected $table = 'paypal_orders';
 
+	protected $fillable = ['status'];
+
 	/*****************
 	 * RELATIONSHIPS *
 	 *****************/

@@ -37,6 +37,16 @@ class OrderService
 		return $order;
 	}
 
+	public function update(Order $order, array $data)
+	{
+		$order->fill($data);
+		if ($order->type() && in_array('orderable', $data))
+			$order->orderable->fill($data['orderable']);
+
+		$order->save();
+		$order->orderable->save();
+	}
+
 	public function getControllerByClass($class)
 	{
 		return $this->controllerMap[ $class ] ?? null;

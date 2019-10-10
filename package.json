@@ -10,40 +10,30 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "dependencies": {
-        "@sentry/browser": "^5.1.0",
-        "immer": "^2.1.3",
-        "lodash.isequal": "^4.5.0",
+        "@sentry/browser": "^5.6.3",
+        "jquery": "^3.4.1",
         "lodash.pick": "^4.4.0",
         "lodash.sumby": "^4.6.0",
-        "normalizr": "^3.3.0",
         "nprogress": "^0.2.0",
-        "path-to-regexp": "^3.0.0",
-        "prop-types": "^15.7.2",
-        "pusher": "^2.2.1",
+        "popper.js": "^1.15.0",
+        "pusher": "^2.2.2",
         "pusher-js": "^4.4.0",
-        "react": "^16.8.6",
-        "react-dom": "^16.8.4",
+        "react": "^16.10.2",
+        "react-dom": "^16.10.2",
         "react-motion": "^0.5.2",
-        "react-redux": "^6.0.1",
-        "react-router-dom": "^4.3.1",
-        "react-toastify": "^5.1.0",
-        "redux": "^4.0.1",
-        "redux-persist": "^5.10.0",
-        "redux-thunk": "^2.3.0"
+        "react-router-dom": "^4.3.1"
     },
     "devDependencies": {
-        "@types/react": "^16.8.18",
-        "@types/react-redux": "^7.0.9",
-        "@types/react-router": "^5.0.1",
         "@babel/preset-react": "^7.0.0",
         "babel-plugin-transform-class-properties": "^6.24.1",
         "babel-preset-env": "^1.7.0",
-        "cross-env": "^5.1",
-        "laravel-mix": "^4.0.7",
-        "lodash": "^4.17.5",
+        "bootstrap": "^4.3.1",
+        "cross-env": "^5.2.1",
+        "laravel-mix": "^4.1.4",
         "resolve-url-loader": "^2.3.1",
+        "sass": "^1.23.0",
+        "sass-loader": "^7.3.1",
         "tailwindcss": "^0.7.4",
-        "ts-loader": "^6.0.1",
-        "typescript": "^3.4.5"
+        "vue-template-compiler": "^2.6.10"
     }
 }

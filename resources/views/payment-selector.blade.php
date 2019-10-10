@@ -1,4 +1,4 @@
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
     <div class="flex flex-wrap p-4 justify-center items-stretch sm:p-6 sm:pt-20">
