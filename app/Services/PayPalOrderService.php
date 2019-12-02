@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Classes\PayPalWrapper;
 use App\Order;
 use App\PayPalOrder;
+use Illuminate\Support\Facades\Log;
 
 class PayPalOrderService
 {
@@ -58,13 +59,17 @@ class PayPalOrderService
 
 		// Associate details
 		$ppOrder->base()->save($order);
+		Log::info('PayPal details saved');
 		$order->save();
+		Log::info('Order details saved');
 
 		// Process checkout cart
 		$cart = $this->getCheckoutCart($order);
 
 		// Request PayPal checkout token
+		Log::info('Setting ExpressCheckout.');
 		$response = PayPalWrapper::setExpressCheckout($cart);
+		Log::info('ExpressCheckout set.', compact('response'));
 
 		// Check if response is valid
 		if (!is_array($response))

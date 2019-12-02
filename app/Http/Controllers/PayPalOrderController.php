@@ -6,11 +6,13 @@ use App\Classes\PayPalWrapper;
 use App\Order;
 use App\PayPalOrder;
 use App\Services\PayPalOrderService;
+use Illuminate\Support\Facades\Log;
 
 class PayPalOrderController extends Controller
 {
 	public function init(PayPalOrderService $service, Order $order)
 	{
+		Log::info("Initializing order $order->id as PayPalOrder");
 		$service->initialize($order);
 
 		return redirect()->route('orders.show', $order);
