@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateOrderRequest;
 use App\Order;
 use App\OrderService;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -17,12 +18,14 @@ class OrderController extends Controller
 	 */
 	public function init(OrderService $service, Order $order, $type)
 	{
+		Log::info("Trying to initialize order $order->id with type `$type`");
 		$controller = $service->getControllerByType($type);
 
 		// Check for reinitialization
 		if ($order->orderable_id)
 			return redirect()->route('orders.show', $order);
 
+		Log::info("Forwarding call to $controller controller");
 		// Forward controller call
 		return app()->call("$controller@init", compact('order'));
 	}
@@ -31,9 +34,11 @@ class OrderController extends Controller
 	{
 		$type = $order->type();
 
-		if (!$type)
-			return view('payment-selector', compact('order'));
+		if (!$type) {
+			Log::info("Order $order->id is not initialized, showing payment selector screen");
 
+			return view('payment-selector', compact('order'));
+		}
 		$controller = $service->getControllerByClass($type);
 
 		// Already pre recheck
