@@ -14,7 +14,7 @@
             
             <!-- Paid amount-->
             <tr>
-                <td>Amount</td>
+                <td>Paid Amount</td>
                 <td>
                     <span class="badge badge-primary">R$ {{ number_format($order->orderable->paid_amount, 2) }}</span>
                 </td>

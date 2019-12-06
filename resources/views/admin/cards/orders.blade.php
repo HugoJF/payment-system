@@ -60,6 +60,7 @@
                     <!-- Actions -->
                     <td>
                         <div class="btn-group">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.orders.recheck', $order) }}">Recheck</a>
                             <a class="btn btn-sm btn-primary" href="{{ route('admin.orders.show', $order) }}">Info</a>
                             <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.orders.edit', $order) }}">Edit</a>
                         </div>
