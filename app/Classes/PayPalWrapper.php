@@ -31,37 +31,21 @@ class PayPalWrapper extends MockableWrapper
 
 	public static function _setExpressCheckout($cart)
 	{
-		Log::info("_setExpressCheckout called");
-		$response = static::getInstance()->setExpressCheckout($cart);
-		Log::info("_setExpressCheckout responded");
-
-		return $response;
+		return static::getInstance()->setExpressCheckout($cart);
 	}
 
 	public static function _getExpressCheckoutDetails($token)
 	{
-		Log::info("_getExpressCheckoutDetails called");
-		$response = static::getInstance()->getExpressCheckoutDetails($token);
-		Log::info("_getExpressCheckoutDetails responded");
-
-		return $response;
+		return static::getInstance()->getExpressCheckoutDetails($token);
 	}
 
 	public static function _doExpressCheckoutPayment($cart, $token, $payerId)
 	{
-		Log::info("_doExpressCheckoutPayment called");
-		$response = static::getInstance()->doExpressCheckoutPayment($cart, $token, $payerId);
-		Log::info("_doExpressCheckoutPayment responded");
-
-		return $response;
+		return static::getInstance()->doExpressCheckoutPayment($cart, $token, $payerId);
 	}
 
 	public static function _getTransactionDetails($transactionId)
 	{
-		Log::info("_getTransactionDetails called");
-		$response = static::getInstance()->getTransactionDetails($transactionId);
-		Log::info("_getTransactionDetails responded");
-
-		return $response;
+		return static::getInstance()->getTransactionDetails($transactionId);
 	}
 }
