@@ -67,15 +67,15 @@ class PayPalOrder extends Model implements OrderContract
 		$paymentDetails = PayPalWrapper::getTransactionDetails($this->transaction_id);
 		$status = $paymentDetails['PAYMENTSTATUS'];
 
+		// Update database
+		$this->status = $status;
+		$this->save();
+
 		// Update base order
 		if ($this->paid()) {
 			$this->base->paid_amount = $this->base->preset_amount;
 			$this->base->save();
 		}
-
-		// Update database
-		$this->status = $status;
-		$this->save();
 	}
 
 	public function paid()

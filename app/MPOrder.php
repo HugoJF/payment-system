@@ -132,7 +132,7 @@ class MPOrder extends Model implements OrderContract
 		}, 0);
 
 		// Update order
-		$this->base->paid_amount = $paidAmount;
+		$this->base->paid_amount = $paidAmount * 100;
 		$this->paid_amount = $paidAmount;
 
 		$this->base->save();
