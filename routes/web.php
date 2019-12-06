@@ -22,7 +22,6 @@ Route::get('orders/{order}/{action?}', 'OrderController@show')->name('orders.sho
 
 Auth::routes();
 
-
 Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 	Route::get('/home', 'HomeController@home')->name('admin.home');
@@ -36,5 +35,4 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 	Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
 
 	Route::patch('orders/{order}', 'homeController@update')->name('admin.orders.update');
-
 });
