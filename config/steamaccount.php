@@ -5,6 +5,6 @@
  */
 
 return [
-	'token' => env('STEAM_ACCOUNT_API'),
+	'token' => env('STEAM_ACCOUNT_API_KEY'),
 	'api'   => env('STEAM_ACCOUNT_API_URL', 'http://localhost:8888'),
 ];
