@@ -61,4 +61,21 @@ class OrderService
 	{
 		return $this->getControllerByClass($this->getClassByType($type));
 	}
+
+    public function calculateUnits(Order $base, $value)
+    {
+        $perUnit = $base->unit_price;
+        $units = 0;
+
+        while ($value >= $perUnit) {
+            $units++;
+            $value -= $perUnit;
+            $perUnit -= $base->discount_per_unit;
+
+            if ($perUnit < $base->unit_price_limit)
+                $perUnit = $base->unit_price_limit;
+        }
+
+        return $units;
+	}
 }

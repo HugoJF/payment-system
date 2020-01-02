@@ -24,6 +24,31 @@ class SteamOrderService
 		$order->save();
 	}
 
+	// TODO: check what's the actual return value of this function
+    public function recheckSteamOrder(SteamOrder $order)
+    {
+        if (!isset($order->tradeoffer_id))
+            return;
+
+        $offer = SteamAccount::getTradeOffer($order->tradeoffer_id);
+
+        if ($offer && array_key_exists('state', $offer))
+            $order->tradeoffer_state = $offer['state'];
+
+        if ($order->paid()) {
+            $service = app(SteamOrderService::class);
+
+            $order->base->paid_amount = $service->getItemsValue($order->encoded_items);
+            $order->base->save();
+        }
+
+        $order->touch();
+
+        $order->save();
+
+        return $offer;
+	}
+
 	public function execute(Order $order, $items)
 	{
 		$value = $this->getItemsValue($items);

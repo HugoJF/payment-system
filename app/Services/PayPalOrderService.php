@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Classes\PayPalWrapper;
 use App\Order;
 use App\PayPalOrder;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class PayPalOrderService
@@ -84,5 +85,50 @@ class PayPalOrderService
 		$ppOrder->link = $response['paypal_link'];
 		$ppOrder->save();
 
+	}
+
+	public function recheck(PayPalOrder $order)
+	{
+
+        // Check if PayPal has checkout details
+        $response = PayPalWrapper::getExpressCheckoutDetails($order->token);
+
+        // Check if response was successful
+        if (!in_array(strtoupper($response['ACK']), ['SUCCESS', 'SUCCESSWITHWARNING']))
+            throw new Exception('Error while communicating with PayPal.');
+
+        // Check if checkout has a payer
+        if (!array_key_exists('PAYERID', $response))
+            return;
+        //			throw new PayPalNoPayerIdException('Order does not have a PayerID associated with it!');
+
+        // If there is no transaction, and this code is reached, execute transaction
+        if (!array_key_exists('TRANSACTIONID', $response)) {
+            $service = app(PayPalOrderService::class);
+            $response = PayPalWrapper::doExpressCheckoutPayment($service->getCheckoutCart($order->base), $order->token, $response['PAYERID']);
+            Log::info('DoExpressCheckoutPayment response', ['response' => $response]);
+            $response = PayPalWrapper::getExpressCheckoutDetails($order->token);
+        }
+
+        // If no transaction
+        if (!array_key_exists('TRANSACTIONID', $response))
+            throw new \Exception("There are no transaction ID associated with order {$order->base->id} TOKEN={$order->token}.");
+
+        // Update order transaction
+        $order->transaction_id = $response['TRANSACTIONID'];
+
+        // Retrieve payment details
+        $paymentDetails = PayPalWrapper::getTransactionDetails($order->transaction_id);
+        $status = $paymentDetails['PAYMENTSTATUS'];
+
+        // Update database
+        $order->status = $status;
+        $order->save();
+
+        // Update base order
+        if ($order->paid()) {
+            $order->base->paid_amount = $order->base->preset_amount;
+            $order->base->save();
+        }
 	}
 }
