@@ -51,7 +51,7 @@ class SteamOrder extends Model implements OrderContract
 
     public function getEncodedItemsAttribute($value)
     {
-        return json_decode($value);
+        return json_decode($value, true);
     }
 
     /********************
