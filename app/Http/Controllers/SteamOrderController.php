@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Order;
+use App\OrderService;
 use App\Services\SteamOrderService;
 use App\SteamOrder;
 use Exception;
@@ -27,12 +28,19 @@ class SteamOrderController extends Controller
         return redirect()->route('orders.show', $order);
     }
 
-    public function execute(SteamOrderService $service, Request $request, Order $order)
+    public function execute(OrderService $orderService, SteamOrderService $service, Request $request, Order $order)
     {
         // Decode items (they are passed as json strings)
         $items = array_map(function ($item) {
             return json_decode($item, true);
         }, $request->input('items'));
+
+        $receivedValue = $service->getItemsValue($items);
+        $paidItems = $orderService->calculateUnits($order, $receivedValue);
+
+        if ($paidItems < $order->min_units) {
+            return redirect()->route('orders.show', $order);
+        }
 
         $service->execute($order, $items);
 

@@ -13,6 +13,7 @@ use App\Order;
 use App\SteamItem;
 use App\SteamOrder;
 use Carbon\Carbon;
+use Exception;
 
 class SteamOrderService
 {
@@ -96,7 +97,7 @@ class SteamOrderService
 
 		// Check if our database is empty
 		if (SteamItem::count() === 0)
-			throw new \Exception('Empty SteamItem table, fill it...');
+			throw new Exception('Empty SteamItem table, fill it...');
 
 		// Fetch pricing data from user inventory
 		$pricingData = SteamItem::whereIn('market_hash_name', $requestedItems)->get();
