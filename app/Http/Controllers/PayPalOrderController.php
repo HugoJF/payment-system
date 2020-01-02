@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\PayPalWrapper;
 use App\Order;
-use App\PayPalOrder;
 use App\Services\PayPalOrderService;
 use Illuminate\Support\Facades\Log;
 

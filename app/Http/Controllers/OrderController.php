@@ -2,49 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateOrderRequest;
 use App\Order;
 use App\OrderService;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
-	/**
-	 * @param OrderService $service
-	 * @param Order        $order
-	 * @param              $type
-	 *
-	 * @return mixed
-	 */
-	public function init(OrderService $service, Order $order, $type)
-	{
-		Log::info("Trying to initialize order $order->id with type `$type`");
-		$controller = $service->getControllerByType($type);
+    /**
+     * Initializes an order with a given payment processor if order is not yet initialized or redirects to .show route if it's.
+     *
+     * @param OrderService $service
+     * @param Order        $order
+     * @param              $type
+     *
+     * @return mixed
+     */
+    public function init(OrderService $service, Order $order, $type)
+    {
+        Log::info("Trying to initialize order $order->id with type `$type`");
+        $controller = $service->getControllerByType($type);
 
-		// Check for reinitialization
-		if ($order->orderable_id)
-			return redirect()->route('orders.show', $order);
+        // Check if order is already initialized
+        if ($order->orderable_id)
+            return redirect()->route('orders.show', $order);
 
-		Log::info("Forwarding call to $controller controller");
-		// Forward controller call
-		return app()->call("$controller@init", compact('order'));
-	}
+        Log::info("Forwarding call to $controller controller");
 
-	public function show(OrderService $service, Order $order, $action = null)
-	{
-		$type = $order->type();
+        // Forward controller call
+        return app()->call("$controller@init", compact('order'));
+    }
 
-		if (!$type) {
-			Log::info("Order $order->id is not initialized, showing payment selector screen");
+    /**
+     * Redirects show route logic to correct controller type. If order is not initialized, show payment processor selector view.
+     *
+     * @param OrderService $service
+     * @param Order        $order
+     * @param null         $action
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|mixed
+     * @throws Exception
+     */
+    public function show(OrderService $service, Order $order, $action = null)
+    {
+        $type = $order->type();
 
-			return view('payment-selector', compact('order'));
-		}
-		$controller = $service->getControllerByClass($type);
+        if (!$type) {
+            Log::info("Order $order->id is not initialized, showing payment selector screen");
 
-		// Already pre recheck
-		if (!$order->paid())
-			$order->recheck();
+            return view('payment-selector', compact('order'));
+        }
 
-		return app()->call("$controller@show", compact('order', 'action'));
-	}
+        $controller = $service->getControllerByClass($type);
+
+        if (!$controller)
+            throw new Exception("Failed to find controller for order type $type from order $order->id");
+
+        return app()->call("$controller@show", compact('order', 'action'));
+    }
 }

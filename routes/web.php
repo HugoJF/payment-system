@@ -31,5 +31,5 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 	Route::get('orders/{order}', 'HomeController@show')->name('admin.orders.show');
 	Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
 
-	Route::patch('orders/{order}', 'homeController@update')->name('admin.orders.update');
+	Route::patch('orders/{order}', 'HomeController@update')->name('admin.orders.update');
 });
