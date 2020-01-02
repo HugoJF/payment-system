@@ -8,7 +8,6 @@
 
 namespace App\Classes;
 
-use Illuminate\Support\Facades\Log;
 use Srmklive\PayPal\Services\ExpressCheckout;
 
 class PayPalWrapper extends MockableWrapper

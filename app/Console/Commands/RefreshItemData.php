@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\SteamItem;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Ixudra\Curl\Facades\Curl;
 
 class RefreshItemData extends Command
@@ -72,14 +71,14 @@ class RefreshItemData extends Command
 				$i->skin_name = $matches[4];
 				$i->condition = $matches[5];
 			} catch (\Exception $e) {
-				Log::warning("Error while splitting {$item->market_hash_name}");
+				logger()->warning("Error while splitting {$item->market_hash_name}");
 			}
 
 			try {
 				$i->save();
 			} catch (\Exception $e) {
 				$this->error("Error while saving item {$item->market_hash_name} " . $e);
-				Log::warning("Error while saving item {$item->market_hash_name}", [
+				logger()->warning("Error while saving item {$item->market_hash_name}", [
 					'item' => $item,
 				]);
 			}

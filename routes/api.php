@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 // TODO: add IPN controllers
 Route::get('ipn/mercadopago', function (Request $request) {
-	\Illuminate\Support\Facades\Log::info('Received IPN from MercadoPago', ['data', $request->all()]);
+	info('Received IPN from MercadoPago', ['data', $request->all()]);
 
 	return 'true';
 })->name('mp-notifications');

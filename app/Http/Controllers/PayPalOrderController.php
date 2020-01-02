@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Services\PayPalOrderService;
-use Illuminate\Support\Facades\Log;
 
 class PayPalOrderController extends Controller
 {
 	public function init(PayPalOrderService $service, Order $order)
 	{
-		Log::info("Initializing order $order->id as PayPalOrder");
+		info("Initializing order $order->id as PayPalOrder");
 		$service->initialize($order);
 
 		return redirect()->route('orders.show', $order);

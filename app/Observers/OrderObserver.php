@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Order;
+use Illuminate\Support\Str;
 
 class OrderObserver
 {
@@ -14,6 +15,6 @@ class OrderObserver
      */
     public function creating(Order $order)
     {
-		$order->id = substr(md5(microtime(true)), 0, 5);
+		$order->id = Str::random(5);
     }
 }

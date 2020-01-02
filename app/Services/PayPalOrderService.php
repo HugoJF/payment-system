@@ -12,7 +12,6 @@ use App\Classes\PayPalWrapper;
 use App\Order;
 use App\PayPalOrder;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class PayPalOrderService
 {
@@ -60,17 +59,17 @@ class PayPalOrderService
 
 		// Associate details
 		$ppOrder->base()->save($order);
-		Log::info('PayPal details saved');
+		info('PayPal details saved');
 		$order->save();
-		Log::info('Order details saved');
+		info('Order details saved');
 
 		// Process checkout cart
 		$cart = $this->getCheckoutCart($order);
 
 		// Request PayPal checkout token
-		Log::info('Setting ExpressCheckout.');
+		info('Setting ExpressCheckout.');
 		$response = PayPalWrapper::setExpressCheckout($cart);
-		Log::info('ExpressCheckout set.', compact('response'));
+		info('ExpressCheckout set.', compact('response'));
 
 		// Check if response is valid
 		if (!is_array($response))
@@ -106,7 +105,7 @@ class PayPalOrderService
         if (!array_key_exists('TRANSACTIONID', $response)) {
             $service = app(PayPalOrderService::class);
             $response = PayPalWrapper::doExpressCheckoutPayment($service->getCheckoutCart($order->base), $order->token, $response['PAYERID']);
-            Log::info('DoExpressCheckoutPayment response', ['response' => $response]);
+            info('DoExpressCheckoutPayment response', ['response' => $response]);
             $response = PayPalWrapper::getExpressCheckoutDetails($order->token);
         }
 

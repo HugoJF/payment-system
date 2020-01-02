@@ -16,7 +16,7 @@ interface OrderContract
 
 	public function status();
 
-	public function type();
+	public function type($type);
 
 	public function canInit(Order $order);
 }

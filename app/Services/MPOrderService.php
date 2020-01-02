@@ -12,7 +12,6 @@ use App\Classes\MP2;
 use App\MPOrder;
 use App\Order;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class MPOrderService
 {
@@ -38,7 +37,7 @@ class MPOrderService
     public function recheckMPOrder(MPOrder $order)
     {
         if (empty($order->order_id)) {
-            Log::warning("Rechecking MPOrder {$order->id} without 'order_id'.");
+            logger()->warning("Rechecking MPOrder {$order->id} without 'order_id'.");
             $this->searchForPayments($order);
 
             return;
@@ -92,7 +91,7 @@ class MPOrderService
         $order->save();
 
         // Log
-        Log::info("Order rechecked with total paid amount: R$ {$order->original['paid_amount']} -> R$ {$order->paid_amount}");
+        info("Order rechecked with total paid amount: R$ {$order->original['paid_amount']} -> R$ {$order->paid_amount}");
 	}
 
     protected function searchForPayments(MPOrder $order)
@@ -118,7 +117,7 @@ class MPOrderService
 
         $results = collect($response['results']);
 
-        Log::info("Found {$results->count()} results while searching for payments with external reference: #{$order->id}");
+        info("Found {$results->count()} results while searching for payments with external reference: #{$order->id}");
 
         $orders = $results->pluck('order.id');
 

@@ -8,7 +8,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Log;
 
 class RecheckPendingOrders implements ShouldQueue
 {
@@ -16,37 +15,28 @@ class RecheckPendingOrders implements ShouldQueue
 
 	private $waitingPeriods;
 
-	/**
-	 * Create a new job instance.
-	 *
-	 * @return void
-	 */
 	public function __construct()
 	{
 		$this->waitingPeriods = config('rechecking.periods');
 	}
 
-	/**
-	 * Execute the job.
-	 *
-	 * @return void
-	 */
 	public function handle()
 	{
 		$pendingOrders = Order::wherePaid(false)->get();
 
-		Log::info("Found {$pendingOrders->count()} pending orders...");
+		info("Found {$pendingOrders->count()} pending orders...");
 
-		foreach ($pendingOrders as $order) {
+		/** @var Order $order */
+        foreach ($pendingOrders as $order) {
 			// Check if order is old enough to be rechecked
 			if ($this->shouldRecheck($order)) {
-				Log::info("Rechecking order {$order->id}");
+				info("Rechecking order {$order->id}");
 				$order->recheck();
 			}
 
 			// Log if state changed
 			if ($order->paid)
-				Log::info("Order $order->id was detected as paid.");
+				info("Order $order->id was detected as paid.");
 		}
 	}
 
