@@ -75,8 +75,8 @@ class SteamOrder extends Model implements OrderContract
 
 		if ($this->paid()) {
 			$service = app(SteamOrderService::class);
-			$this->paid_amount = $service->getItemsValue($this->items);
-			$this->save();
+			$this->base->paid_amount = $service->getItemsValue($this->items);
+			$this->base->save();
 		}
 
 		$this->touch();
