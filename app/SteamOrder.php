@@ -84,7 +84,7 @@ class SteamOrder extends Model implements OrderContract
         return self::class;
     }
 
-    public function canInit(Order $order)
+    public function canInit($order)
     {
         return isset($order->payer_tradelink);
     }
