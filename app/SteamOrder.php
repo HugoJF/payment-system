@@ -49,9 +49,9 @@ class SteamOrder extends Model implements OrderContract
         return $this->morphOne('App\Order', 'orderable');
     }
 
-    public function getItemsAttribute()
+    public function getEncodedItemsAttribute()
     {
-        return json_decode($this->items);
+        return json_decode($this->encoded_items);
     }
 
     /********************
@@ -80,7 +80,7 @@ class SteamOrder extends Model implements OrderContract
 
         if ($this->paid()) {
             $service = app(SteamOrderService::class);
-            $this->base->paid_amount = $service->getItemsValue($this->items);
+            $this->base->paid_amount = $service->getItemsValue($this->encoded_items);
             $this->base->save();
         }
 
