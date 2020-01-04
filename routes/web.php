@@ -12,6 +12,9 @@
 */
 
 Route::get('orders/{order}/init/{type}', 'OrderController@init')->name('orders.paypal.init');
+Route::get('orders/{order}/init/paypal', 'OrderController@init')->name('orders.paypal.init');
+Route::get('orders/{order}/init/mp', 'OrderController@init')->name('orders.mp.init');
+Route::get('orders/{order}/init/steam', 'OrderController@init')->name('orders.steam.init');
 
 Route::post('orders/{order}/steam/execute', 'SteamOrderController@execute')->name('orders.steam.execute');
 
