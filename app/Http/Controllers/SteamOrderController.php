@@ -39,6 +39,8 @@ class SteamOrderController extends Controller
         $paidItems = $orderService->calculateUnits($order, $receivedValue);
 
         if ($paidItems < $order->min_units) {
+            flash()->error("Pedido abaixo da quantidade mínima de $order->min_units!");
+
             return redirect()->route('orders.show', $order);
         }
 
