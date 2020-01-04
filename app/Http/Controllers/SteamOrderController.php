@@ -16,7 +16,7 @@ class SteamOrderController extends Controller
      * @param Order             $order
      *
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function init(SteamOrderService $service, Order $order)
     {
@@ -42,7 +42,11 @@ class SteamOrderController extends Controller
             return redirect()->route('orders.show', $order);
         }
 
-        $service->execute($order, $items);
+        try {
+            $service->execute($order, $items);
+        } catch (Exception $e) {
+            flash()->error($e->getMessage());
+        }
 
         return redirect()->route('orders.show', $order);
     }

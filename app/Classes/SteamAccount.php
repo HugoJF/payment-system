@@ -38,7 +38,6 @@ class SteamAccount extends MockableWrapper
 		$query->withHeader('Accept', 'application/json');
 		$query->returnResponseObject();
 		$query->enableDebug(storage_path('logs/curl.txt'));
-
 		$query->asJson(true);
 
 		if ($post) {
