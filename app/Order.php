@@ -42,12 +42,12 @@ class Order extends Model implements OrderContract
 
 	public function getPaidUnitsAttribute()
 	{
-		$this->paidUnits($this);
+		return $this->paidUnits($this);
 	}
 
 	public function getUnitsAttribute()
 	{
-		$this->units($this);
+		return $this->units($this);
 	}
 
 	public function getPaidAttribute()
