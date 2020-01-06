@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header">MercadoPago details</div>
-    
+
     <div class="card-body">
         <table class="table">
             <tbody>
@@ -11,7 +11,15 @@
                     <code>{{ $order->orderable->preference_id}}</code>
                 </td>
             </tr>
-            
+
+            <!-- Preference ID -->
+            <tr>
+                <td>Order ID</td>
+                <td>
+                    <code>{{ $order->orderable->order_id }}</code>
+                </td>
+            </tr>
+
             <!-- Paid amount-->
             <tr>
                 <td>Paid Amount</td>
@@ -19,7 +27,7 @@
                     <span class="badge badge-primary">R$ {{ number_format($order->orderable->paid_amount, 2) }}</span>
                 </td>
             </tr>
-            
+
             <!-- Amount -->
             <tr>
                 <td>Amount</td>

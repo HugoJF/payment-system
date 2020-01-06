@@ -57,7 +57,7 @@ class MPOrderService
 
         // Check if response was OK
         if ($info['status'] != 200)
-            throw new Exception("MercadoPago API returned with status: {$order['status']}");
+            throw new Exception("MercadoPago API returned with status: {$info['status']}");
 
         // Check if we have a response
         if (!array_key_exists('response', $info) || empty($info['response']))
