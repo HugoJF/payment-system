@@ -76,7 +76,7 @@ class MPOrderService
         }, 0);
 
         if (count($response['payments']) === 1) {
-            $order->order_id = $response['payments'][0];
+            $order->order_id = $response['payments'][0]['id'];
         } else {
             $order->order_id = -count($response['payments']);
         }
