@@ -15,24 +15,24 @@ use Exception;
 
 class MPOrderService
 {
-	public function initialize(Order $order)
-	{
-		// Attempt to create a new MercadoPago preference
-		$preference = MP2::create_preference($this->generatePreferenceData($order));
+    public function initialize(Order $order)
+    {
+        // Attempt to create a new MercadoPago preference
+        $preference = MP2::create_preference($this->generatePreferenceData($order));
 
-		// Prepare to store MercadoPago details to database
-		$mpOrder = MPOrder::make();
+        // Prepare to store MercadoPago details to database
+        $mpOrder = MPOrder::make();
 
-		$mpOrder->preference_id = $preference['response']['id'];
-		$mpOrder->amount = $this->getAmount($order);
+        $mpOrder->preference_id = $preference['response']['id'];
+        $mpOrder->amount = $this->getAmount($order);
 
-		// Save first so we get an ID
-		$mpOrder->save();
+        // Save first so we get an ID
+        $mpOrder->save();
 
-		// Associate details to base order
-		$mpOrder->base()->save($order);
-		$order->save();
-	}
+        // Associate details to base order
+        $mpOrder->base()->save($order);
+        $order->save();
+    }
 
     public function recheckMPOrder(MPOrder $order)
     {
@@ -75,6 +75,12 @@ class MPOrderService
             return $total + round($item['total_paid_amount'], 2);
         }, 0);
 
+        if (count($response['payments']) === 1) {
+            $order->order_id = $response['payments'][0];
+        } else {
+            $order->order_id = -count($response['payments']);
+        }
+
         // Update preference ID if it's not present
         if (empty($order->preference_id))
             $order->preference_id = $response['preference_id'];
@@ -92,7 +98,7 @@ class MPOrderService
 
         // Log
         info("Order rechecked with total paid amount: R$ {$order->original['paid_amount']} -> R$ {$order->paid_amount}");
-	}
+    }
 
     protected function searchForPayments(MPOrder $order)
     {
@@ -117,7 +123,7 @@ class MPOrderService
 
         $results = collect($response['results']);
 
-        info("Found {$results->count()} results while searching for payments with external reference: #{$order->id}");
+        info("Found {$results->count()} results while searching for payments with external reference: #{$order->base->id}");
 
         $orders = $results->pluck('order.id');
 
@@ -130,7 +136,7 @@ class MPOrderService
             if ($payment['status'] !== 'approved')
                 return $paid;
 
-            return $paid + round($payment['transaction_amount']); // This is R$ and should not be converted to cents.
+            return $paid + round($payment['transaction_amount'], 2); // This is R$ and should not be converted to cents.
         }, 0);
 
         // Update order
@@ -139,40 +145,40 @@ class MPOrderService
 
         $order->base->save();
         $order->save();
-	}
+    }
 
-	public function generatePreferenceData(Order $order)
-	{
-		$preferenceData = [
-			'items'              => [[
-				'title'       => $order->reason,
-				'quantity'    => 1,
-				'currency_id' => 'BRL',
-				'unit_price'  => $this->getAmount($order),
-			]],
-			'back_urls'          => [
-				'success' => route('orders.show', $order, 'pending'),
-				'pending' => route('orders.show', $order, 'pending'),
-				'failure' => route('orders.show', $order, 'failure'),
-			],
-			'auto_return'        => 'approved',
-			'external_reference' => config('mercadopago.reference_prefix') . $order->id,
-			'notification_url'   => route(config('ipn.mp-notifications-route')),
-		];
+    public function generatePreferenceData(Order $order)
+    {
+        $preferenceData = [
+            'items'              => [[
+                'title'       => $order->reason,
+                'quantity'    => 1,
+                'currency_id' => 'BRL',
+                'unit_price'  => $this->getAmount($order),
+            ]],
+            'back_urls'          => [
+                'success' => route('orders.show', $order, 'pending'),
+                'pending' => route('orders.show', $order, 'pending'),
+                'failure' => route('orders.show', $order, 'failure'),
+            ],
+            'auto_return'        => 'approved',
+            'external_reference' => config('mercadopago.reference_prefix') . $order->id,
+            'notification_url'   => route(config('ipn.mp-notifications-route')),
+        ];
 
-		return $preferenceData;
-	}
+        return $preferenceData;
+    }
 
-	/**
-	 * Get order amount that is accepted by MercadoPago. (converted from cents to R$)
-	 *
-	 * @param Order $order - price reference
-	 *
-	 * @return float
-	 */
-	public function getAmount(Order $order)
-	{
-		return round($order->preset_amount / 100, 2);
-	}
+    /**
+     * Get order amount that is accepted by MercadoPago. (converted from cents to R$)
+     *
+     * @param Order $order - price reference
+     *
+     * @return float
+     */
+    public function getAmount(Order $order)
+    {
+        return round($order->preset_amount / 100, 2);
+    }
 
 }
