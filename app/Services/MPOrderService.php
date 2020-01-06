@@ -126,14 +126,20 @@ class MPOrderService
         info("Found {$results->count()} results while searching for payments with external reference: #{$order->base->id}");
 
         $orders = $results->pluck('order.id');
-
+        $count = $orders->count();
         // If there
-        if ($orders->count() === 1)
+        if ($count === 1)
             $order->order_id = $orders->first();
+
+        info("Found $count payments for reference #{$order->base->id}: ");
 
         // Sum approved payments
         $paidAmount = $results->reduce(function ($paid, $payment) {
-            if ($payment['status'] !== 'approved')
+            $id = $payment['id'];
+            $status = $payment['status'];
+
+            info("--- payment $id is status: $status");
+            if ($status !== 'approved')
                 return $paid;
 
             return $paid + round($payment['transaction_amount'], 2); // This is R$ and should not be converted to cents.
