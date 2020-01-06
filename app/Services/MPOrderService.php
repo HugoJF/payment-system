@@ -46,25 +46,25 @@ class MPOrderService
         // Order checking is deprecated as it's somewhat inconsistent (and requires more requests)
 
         // Query API for information
-        $order = MP2::get('merchant_orders', $order->order_id);
+        $info = MP2::get('merchant_orders', $order->order_id);
 
-        if (!is_array($order))
+        if (!is_array($info))
             throw new Exception('Non array response returned');
 
         // Check if response was valid
-        if (!array_key_exists('status', $order))
+        if (!array_key_exists('status', $info))
             throw new Exception('MercadoPago API returned empty response without status.');
 
         // Check if response was OK
-        if ($order['status'] != 200)
+        if ($info['status'] != 200)
             throw new Exception("MercadoPago API returned with status: {$order['status']}");
 
         // Check if we have a response
-        if (!array_key_exists('response', $order) || empty($order['response']))
+        if (!array_key_exists('response', $info) || empty($info['response']))
             throw new \Exception("MercadoPago API returned empty response");
 
         // Keep response reference
-        $response = $order['response'];
+        $response = $info['response'];
 
         // Compute total amount of each payment in this order
         $paidAmount = collect($response['payments'])->reduce(function ($total, $item) {
