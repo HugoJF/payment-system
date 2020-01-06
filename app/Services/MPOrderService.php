@@ -67,19 +67,7 @@ class MPOrderService
         $response = $info['response'];
 
         // Compute total amount of each payment in this order
-        $paidAmount = collect($response['payments'])->reduce(function ($total, $item) {
-            if (!array_key_exists('status', $item) || $item['status'] !== 'approved') {
-                return $total;
-            }
-
-            return $total + round($item['total_paid_amount'], 2);
-        }, 0);
-
-        if (count($response['payments']) === 1) {
-            $order->order_id = $response['payments'][0]['id'];
-        } else {
-            $order->order_id = -count($response['payments']);
-        }
+        $paidAmount = $this->calculatePaymentsPaidAmount(collect($response['payments']));
 
         // Update preference ID if it's not present
         if (empty($order->preference_id))
@@ -134,7 +122,19 @@ class MPOrderService
         info("Found $count payments for reference #{$order->base->id}: ");
 
         // Sum approved payments
-        $paidAmount = $results->reduce(function ($paid, $payment) {
+        $paidAmount = $this->calculatePaymentsPaidAmount($results);
+
+        // Update order
+        $order->base->paid_amount = $paidAmount * 100;
+        $order->paid_amount = $paidAmount;
+
+        $order->base->save();
+        $order->save();
+    }
+
+    protected function calculatePaymentsPaidAmount($payments)
+    {
+        return $payments->reduce(function ($paid, $payment) {
             $id = $payment['id'];
             $status = $payment['status'];
 
@@ -144,13 +144,6 @@ class MPOrderService
 
             return $paid + round($payment['transaction_amount'], 2); // This is R$ and should not be converted to cents.
         }, 0);
-
-        // Update order
-        $order->base->paid_amount = $paidAmount * 100;
-        $order->paid_amount = $paidAmount;
-
-        $order->base->save();
-        $order->save();
     }
 
     public function generatePreferenceData(Order $order)
