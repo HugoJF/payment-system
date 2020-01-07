@@ -13,20 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-// TODO: add IPN controllers
-Route::get('ipn/mercadopago', function (Request $request) {
-	info('Received IPN from MercadoPago', ['data', $request->all()]);
-
-	return 'true';
-})->name('mp-notifications');
-
-Route::get('paypal/success', function () {
-	return 'true';
-})->name('pp-orders.success');
-
-Route::get('paypal/cancel', function () {
-	return 'true';
-})->name('pp-orders.cancel');
+Route::get('ipn/mercadopago', 'MPOrderController@ipn')->name('mp-notifications');
 
 Route::prefix('v1')->group(function () {
 	Route::prefix('orders')->name('orders.')->group(function () {

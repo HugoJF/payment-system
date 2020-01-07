@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
 		$schedule->command('steamorders:refresh')->everyMinute();
 
 		$schedule->command('orders:recheck')->everyMinute();
-		
+
 		// $schedule->command('inspire')
 		//          ->hourly();
 	}

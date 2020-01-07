@@ -5,32 +5,41 @@ namespace App\Http\Controllers;
 use App\Classes\MP2;
 use App\Order;
 use App\Services\MPOrderService;
+use Illuminate\Http\Request;
+use Symplify\EasyCodingStandard\SniffRunner\Exception\File\NotImplementedException;
 
 class MPOrderController extends Controller
 {
-	public function init(MPOrderService $service, Order $order)
-	{
-		$service->initialize($order);
+    public function init(MPOrderService $service, Order $order)
+    {
+        $service->initialize($order);
 
-		return redirect()->route('orders.show', $order);
-	}
+        return redirect()->route('orders.show', $order);
+    }
 
-	public function show(Order $order, $action = null)
-	{
-		if ($order->paid())
-			return view('orders.order-success', compact('order'));
+    public function show(Order $order, $action = null)
+    {
+        if ($order->paid())
+            return view('orders.order-success', compact('order'));
 
-		if ($action === 'pending')
-			return view('orders.order-pending', compact('order'));
+        if ($action === 'pending')
+            return view('orders.order-pending', compact('order'));
 
-		if ($order->orderable->preference_id) {
-			$preference = MP2::get_preference($order->orderable->preference_id);
-			$payUrl = $preference['response']['init_point'];
+        if ($order->orderable->preference_id) {
+            $preference = MP2::get_preference($order->orderable->preference_id);
+            $payUrl = $preference['response']['init_point'];
 
-			return view('orders.order-summary', compact('payUrl', 'order'));
-		}
+            return view('orders.order-summary', compact('payUrl', 'order'));
+        }
 
-		return view('orders.order-error', compact('order'));
-	}
+        return view('orders.order-error', compact('order'));
+    }
+
+    public function ipn(Request $request)
+    {
+        info('Received IPN from MercadoPago', ['data', $request->all()]);
+
+        throw new NotImplementedException();
+    }
 
 }
