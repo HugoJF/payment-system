@@ -50,7 +50,7 @@ class PayPalOrderService
 	/**
 	 * @param $order
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function initialize($order)
 	{
@@ -73,11 +73,11 @@ class PayPalOrderService
 
 		// Check if response is valid
 		if (!is_array($response))
-			throw new \Exception('Invalid response from PayPal');
+			throw new Exception('Invalid response from PayPal');
 
 		// Check if token was returned
 		if (!array_key_exists('TOKEN', $response))
-			throw new \Exception('PayPal did not return a token');
+			throw new Exception('PayPal did not return a token');
 
 		// Store token and base Order
 		$ppOrder->token = $response['TOKEN'];
@@ -111,7 +111,7 @@ class PayPalOrderService
 
         // If no transaction
         if (!array_key_exists('TRANSACTIONID', $response))
-            throw new \Exception("There are no transaction ID associated with order {$order->base->id} TOKEN={$order->token}.");
+            throw new Exception("There are no transaction ID associated with order {$order->base->id} TOKEN={$order->token}.");
 
         // Update order transaction
         $order->transaction_id = $response['TRANSACTIONID'];
