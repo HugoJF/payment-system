@@ -88,17 +88,24 @@ class PayPalOrderService
     public function recheck(PayPalOrder $order)
     {
 
+        // Check if order has any token associated with it
+        if (!$order->token) {
+            info(sprintf('Failed rechecking order %s that has no PayPal token.', $order->base->id));
+            return;
+        }
+
         // Check if PayPal has checkout details
         $response = PayPalWrapper::getExpressCheckoutDetails($order->token);
 
         // Check if response was successful
-        if (!in_array(strtoupper($response['ACK']), ['SUCCESS', 'SUCCESSWITHWARNING']))
-            throw new Exception('Error while communicating with PayPal.');
+        if (!in_array(strtoupper($response['ACK']), ['SUCCESS', 'SUCCESSWITHWARNING'])) {
+            info('Failed to recheck PayPal order', compact('response'));
+            return;
+        }
 
         // Check if checkout has a payer
         if (!array_key_exists('PAYERID', $response))
             return;
-        //			throw new PayPalNoPayerIdException('Order does not have a PayerID associated with it!');
 
         // If there is no transaction, and this code is reached, execute transaction
         if (!array_key_exists('TRANSACTIONID', $response)) {
