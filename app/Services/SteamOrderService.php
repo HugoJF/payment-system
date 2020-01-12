@@ -100,7 +100,10 @@ class SteamOrderService
 			throw new Exception('Empty SteamItem table, fill it...');
 
 		// Fetch pricing data from user inventory
-		$pricingData = SteamItem::whereIn('market_hash_name', $requestedItems)->get();
+		$pricingData = SteamItem::query()
+            ->whereIn('market_hash_name', $requestedItems)
+            ->where('price', '>', 0.5)
+            ->get();
 
 		// Key by market_hash_name
 		$pricingData = $pricingData->keyBy('market_hash_name');
