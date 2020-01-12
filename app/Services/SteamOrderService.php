@@ -102,7 +102,7 @@ class SteamOrderService
 		// Fetch pricing data from user inventory
 		$pricingData = SteamItem::query()
             ->whereIn('market_hash_name', $requestedItems)
-            ->where('price', '>', 50)
+            ->where('price', '>', 25)
             ->get();
 
 		// Key by market_hash_name
