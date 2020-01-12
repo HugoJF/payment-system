@@ -118,7 +118,6 @@ class SteamOrderService
 		// Merge inventory and pricing data
 		return $inventory->map(function ($item) use ($pricingData) {
 			$i = $pricingData[ $item['market_hash_name'] ];
-
 			// TODO: improve
 			return [
 				'appid'            => $item['appid'],
