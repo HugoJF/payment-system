@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\SteamItem;
+use Exception;
 use Illuminate\Console\Command;
 use Ixudra\Curl\Facades\Curl;
 
@@ -70,14 +71,17 @@ class RefreshItemData extends Command
 				$i->item_name = trim(($matches[1] ?? '') . ' ' . $matches[3]);
 				$i->skin_name = $matches[4];
 				$i->condition = $matches[5];
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				logger()->warning("Error while splitting {$item->market_hash_name}");
 			}
 
 			try {
 				$i->save();
-			} catch (\Exception $e) {
-				$this->error("Error while saving item {$item->market_hash_name} " . $e);
+			} catch (Exception $e) {
+			    $message = $e->getMessage();
+			    $code = $e->getCode();
+				$this->error("Error while saving item {$item->market_hash_name}: [$code] $message");
+				
 				logger()->warning("Error while saving item {$item->market_hash_name}", [
 					'item' => $item,
 				]);
