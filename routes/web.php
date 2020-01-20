@@ -22,7 +22,7 @@ Route::get('orders/{order}/{action?}', 'OrderController@show')->name('orders.sho
 
 Auth::routes();
 
-Route::middleware(['admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 	Route::get('/home', 'HomeController@home')->name('admin.home');
 	Route::get('/', 'HomeController@index')->name('admin.index');
