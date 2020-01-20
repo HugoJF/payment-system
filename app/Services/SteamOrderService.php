@@ -17,15 +17,15 @@ use Exception;
 
 class SteamOrderService
 {
-	public function initialize(Order $order)
-	{
-		$steamOrder = SteamOrder::create();
+    public function initialize(Order $order)
+    {
+        $steamOrder = SteamOrder::create();
 
-		$steamOrder->base()->save($order);
-		$order->save();
-	}
+        $steamOrder->base()->save($order);
+        $order->save();
+    }
 
-	// TODO: check what's the actual return value of this function
+    // TODO: check what's the actual return value of this function
     public function recheckSteamOrder(SteamOrder $order)
     {
         if (!isset($order->tradeoffer_id))
@@ -48,85 +48,91 @@ class SteamOrderService
         $order->save();
 
         return $offer;
-	}
+    }
 
-	public function execute(Order $order, $items)
-	{
-		$value = $this->getItemsValue($items);
+    public function execute(Order $order, $items)
+    {
+        $value = $this->getItemsValue($items);
 
-		// Send tradeoffer
-		$response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido #{$order->id} para \"{$order->reason}\"", $items);
+        // Send tradeoffer
+        $response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido #{$order->id} para \"{$order->reason}\"", $items);
 
-		// Update the order amount
-		$order->preset_amount = $value;
+        // Update the order amount
+        $order->preset_amount = $value;
 
-		// Update order details
-		$steamOrder = $order->orderable;
-		$steamOrder->encoded_items = json_encode((array) $items);
-		$steamOrder->tradeoffer_id = $response['id'];
-		$steamOrder->tradeoffer_state = $response['state'];
-		$steamOrder->tradeoffer_sent_at = Carbon::now();
+        // Update order details
+        $steamOrder = $order->orderable;
+        $steamOrder->encoded_items = json_encode((array)$items);
+        $steamOrder->tradeoffer_id = $response['id'];
+        $steamOrder->tradeoffer_state = $response['state'];
+        $steamOrder->tradeoffer_sent_at = Carbon::now();
 
-		$steamOrder->save();
-		$order->save();
-	}
+        $steamOrder->save();
+        $order->save();
+    }
 
-	public function getItemsValue($items)
-	{
-		$inventory = $this->mergePricingData($items);
+    public function getItemsValue($items)
+    {
+        $inventory = $this->mergePricingData($items);
 
-		return $inventory->sum('price');
-	}
+        return $inventory->sum('price');
+    }
 
-	public function getInventory($steamid)
-	{
-		// Fetch user inventory
-		$inventory = SteamAccount::getInventory($steamid);
+    public function getInventory($steamid)
+    {
+        // Fetch user inventory
+        $inventory = SteamAccount::getInventory($steamid);
 
-		$inventory = $this->mergePricingData($inventory);
+        $inventory = $this->mergePricingData($inventory);
 
-		return $inventory;
-	}
+        return $inventory;
+    }
 
-	public function mergePricingData($inventory)
-	{
-		$inventory = collect($inventory);
+    public function mergePricingData($inventory)
+    {
+        $inventory = collect($inventory);
 
-		// Pluck market_hash_names from user inventory
-		$requestedItems = $inventory->pluck('market_hash_name');
+        // Check if our database is empty
+        if (SteamItem::count() === 0)
+            throw new Exception('Empty SteamItem table, fill it...');
 
-		// Check if our database is empty
-		if (SteamItem::count() === 0)
-			throw new Exception('Empty SteamItem table, fill it...');
 
-		// Fetch pricing data from user inventory
-		$pricingData = SteamItem::query()
+        // Pluck market_hash_names from user inventory
+        $requestedItems = $inventory->pluck('market_hash_name');
+
+        // Fetch pricing data from user inventory
+        $prices = SteamItem::query()
             ->whereIn('market_hash_name', $requestedItems)
-            ->where('price', '>', 30)
-            ->get();
+            ->where('price', '>', config('payment-system.minimum-steam-item-value', 30))
+            ->get()
+            ->keyBy('market_hash_name');
 
-		// Key by market_hash_name
-		$pricingData = $pricingData->keyBy('market_hash_name');
 
-		// Filter negative priced items
-		$prices = $pricingData->toArray();
-		$inventory = $inventory->reject(function ($item) use ($prices, $pricingData) {
-			return !array_key_exists($item['market_hash_name'], $prices) ||
-				$pricingData[ $item['market_hash_name'] ]->price < 0;
-		});
+        // Filter negative priced items and that have no pricing data
+        $inventory = $inventory->reject(function ($item) use ($prices) {
+            $itemName = $item['market_hash_name'];
 
-		// Merge inventory and pricing data
-		return $inventory->map(function ($item) use ($pricingData) {
-			$i = $pricingData[ $item['market_hash_name'] ];
-			// TODO: improve
-			return [
-				'appid'            => $item['appid'],
-				'contextid'        => $item['contextid'],
-				'assetid'          => $item['assetid'],
-				'market_hash_name' => $item['market_hash_name'],
-				'price'            => $i->price,
-				'icon_url'         => $i->icon_url,
-			];
-		});
-	}
+            return !$prices->get($itemName) || $prices[$itemName]->price < 0;
+        });
+
+        // Merge inventory and pricing data
+        return $inventory->map(function ($item) use ($prices) {
+            return $this->mergeItemData($item, $prices);
+        });
+    }
+
+    private function mergeItemData($item, $prices)
+    {
+        $item = collect($item);
+        $itemName = $item['market_hash_name'];
+        $price = $prices[$itemName];
+
+        $itemFields = ['appid', 'contextid', 'assetid'];
+        $dataFields = ['price', 'icon_url'];
+
+        $itemData = $item->only($itemFields);
+        $priceData = $price->only($dataFields);
+
+        return $itemData->merge($priceData);
+    }
 }

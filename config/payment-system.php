@@ -7,6 +7,8 @@ $days = 24 * $hours;
 $weeks = 7 * $days;
 
 return [
+    'minimum-steam-item-value' => 30,
+
     'rechecking-periods' => [
         1 * $minutes,
         2 * $minutes,
