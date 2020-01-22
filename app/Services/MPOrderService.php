@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Classes\MP2;
 use App\MPOrder;
 use App\Order;
+use DB;
 use Exception;
 
 class MPOrderService
@@ -36,60 +37,8 @@ class MPOrderService
 
     public function recheckMPOrder(MPOrder $order)
     {
-        if (empty($order->order_id)) {
-            logger()->warning("Rechecking MPOrder {$order->id} without 'order_id'.");
-            $this->searchForPayments($order);
+        logger()->warning("Rechecking MPOrder {$order->id}");
 
-            return;
-        }
-
-        // Order checking is deprecated as it's somewhat inconsistent (and requires more requests)
-
-        // Query API for information
-        $info = MP2::get('merchant_orders', $order->order_id);
-
-        if (!is_array($info))
-            throw new Exception('Non array response returned');
-
-        // Check if response was valid
-        if (!array_key_exists('status', $info))
-            throw new Exception('MercadoPago API returned empty response without status.');
-
-        // Check if response was OK
-        if ($info['status'] != 200)
-            throw new Exception("MercadoPago API returned with status: {$info['status']}");
-
-        // Check if we have a response
-        if (!array_key_exists('response', $info) || empty($info['response']))
-            throw new \Exception("MercadoPago API returned empty response");
-
-        // Keep response reference
-        $response = $info['response'];
-
-        // Compute total amount of each payment in this order
-        $paidAmount = $this->calculatePaymentsPaidAmount(collect($response['payments']));
-
-        // Update preference ID if it's not present
-        if (empty($order->preference_id))
-            $order->preference_id = $response['preference_id'];
-
-        // Update order status
-        $order->paid_amount = $paidAmount;
-
-        // Update base order
-        $order->base->paid_amount = round($paidAmount * 100);
-        $order->base->save();
-
-        // Save
-        $order->touch();
-        $order->save();
-
-        // Log
-        info("Order rechecked with total paid amount: R$ {$order->original['paid_amount']} -> R$ {$order->paid_amount}");
-    }
-
-    protected function searchForPayments(MPOrder $order)
-    {
         $response = MP2::payments_search('external_reference', config('mercadopago.reference_prefix') . $order->base->id);
 
         // Check for status in response
@@ -111,25 +60,24 @@ class MPOrderService
 
         $results = collect($response['results']);
 
-        info("Found {$results->count()} results while searching for payments with external reference: #{$order->base->id}");
-
-        $orders = $results->pluck('order.id');
-        $count = $orders->count();
-        // If there
-        if ($count === 1)
-            $order->order_id = $orders->first();
-
-        info("Found $count payments for reference #{$order->base->id}: ");
+        info("Found {$results->count()} payments while searching with external reference: #{$order->base->id}");
 
         // Sum approved payments
         $paidAmount = $this->calculatePaymentsPaidAmount($results);
 
         // Update order
-        $order->base->paid_amount = $paidAmount * 100;
-        $order->paid_amount = $paidAmount;
+        DB::beginTransaction();
+        try {
+            $order->base->paid_amount = $paidAmount * 100;
+            $order->paid_amount = $paidAmount;
 
-        $order->base->save();
-        $order->save();
+            $order->base->save();
+            $order->save();
+        } catch (Exception $e) {
+            DB::rollBack();
+            report($e);
+        }
+        DB::commit();
     }
 
     protected function calculatePaymentsPaidAmount($payments)
@@ -148,7 +96,7 @@ class MPOrderService
 
     public function generatePreferenceData(Order $order)
     {
-        $preferenceData = [
+        return [
             'items'              => [[
                 'title'       => $order->reason,
                 'quantity'    => 1,
@@ -164,8 +112,6 @@ class MPOrderService
             'external_reference' => config('mercadopago.reference_prefix') . $order->id,
             'notification_url'   => route(config('ipn.mp-notifications-route')),
         ];
-
-        return $preferenceData;
     }
 
     /**

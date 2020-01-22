@@ -12,14 +12,6 @@
                 </td>
             </tr>
 
-            <!-- Preference ID -->
-            <tr>
-                <td>Order ID</td>
-                <td>
-                    <code>{{ $order->orderable->order_id }}</code>
-                </td>
-            </tr>
-
             <!-- Paid amount-->
             <tr>
                 <td>Paid Amount</td>
