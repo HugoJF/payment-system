@@ -55,13 +55,13 @@ return [
             'visibility' => 'public',
         ],
 
-        'minio' => [
+        'backups' => [
             'driver'   => 'minio',
-            'key'      => env('MINIO_KEY'),
-            'secret'   => env('MINIO_SECRET'),
+            'key'      => env('MINIO_BACKUPS_KEY'),
+            'secret'   => env('MINIO_BACKUPS_SECRET'),
             'region'   => 'br',
-            'bucket'   => env('MINIO_BUCKET'),
-            'endpoint' => env('MINIO_ENDPOINT'),
+            'bucket'   => env('MINIO_BACKUPS_BUCKET'),
+            'endpoint' => env('MINIO_BACKUPS_ENDPOINT'),
         ],
     ],
 ];
