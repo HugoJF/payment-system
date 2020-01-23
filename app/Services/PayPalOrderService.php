@@ -131,7 +131,7 @@ class PayPalOrderService
         $order->save();
 
         // Update base order
-        if ($order->paid()) {
+        if ($order->paymentCompleted()) {
             $order->base->paid_amount = $order->base->preset_amount;
             $order->base->save();
         }

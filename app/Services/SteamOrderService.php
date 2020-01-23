@@ -36,10 +36,10 @@ class SteamOrderService
         if ($offer && array_key_exists('state', $offer))
             $order->tradeoffer_state = $offer['state'];
 
-        if ($order->paid()) {
+        if ($order->accepted()) {
             $service = app(SteamOrderService::class);
 
-            $order->base->paid_amount = $service->getItemsValue($order->encoded_items);
+            $order->base->paid_amount = $order->base->preset_amount;
             $order->base->save();
         }
 

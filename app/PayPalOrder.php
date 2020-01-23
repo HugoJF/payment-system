@@ -21,6 +21,13 @@ class PayPalOrder extends Model implements OrderContract
 		return $this->morphOne('App\Order', 'orderable');
 	}
 
+    public function paymentCompleted()
+    {
+        return collect(['Completed', 'Processed'])->contains(function ($value) {
+            return strcasecmp($this->status, $value) === 0;
+        });
+    }
+
 	/**************
 	 * OVERWRITES *
 	 **************/
@@ -34,13 +41,6 @@ class PayPalOrder extends Model implements OrderContract
 	    $service = app(PayPalOrderService::class);
 
 	    $service->recheck($this);
-	}
-
-	public function paid()
-	{
-		return collect(['Completed', 'Processed'])->contains(function ($value) {
-			return strcasecmp($this->status, $value) === 0;
-		});
 	}
 
 	public function type()

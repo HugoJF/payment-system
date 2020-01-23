@@ -31,11 +31,6 @@ class MPOrder extends Model implements OrderContract
 	    $service->recheckMPOrder($this);
 	}
 
-	public function paid()
-	{
-		return $this->paid_amount >= $this->amount;
-	}
-
 	public function type()
 	{
 		return self::class;

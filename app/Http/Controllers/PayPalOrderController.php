@@ -18,7 +18,7 @@ class PayPalOrderController extends Controller
 	public function show(Order $order, $action = null)
 	{
 		// Order updated to some status
-		if ($order->paid())
+		if ($order->paid)
 			return view('orders.order-success', compact('order'));
 
 		// Redirect from PayPal

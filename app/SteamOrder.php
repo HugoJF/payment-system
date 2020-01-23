@@ -69,7 +69,7 @@ class SteamOrder extends Model implements OrderContract
         return $service->recheckSteamOrder($this);
     }
 
-    public function paid()
+    public function accepted()
     {
         return $this->tradeoffer_state === static::ACCEPTED;
     }

@@ -68,7 +68,7 @@ class Order extends Model implements OrderContract
 
 	public function getPaidAttribute()
 	{
-		return $this->paid();
+        return $this->paid_amount >= $this->preset_amount;
 	}
 
 	public function getTypeAttribute()
@@ -106,14 +106,6 @@ class Order extends Model implements OrderContract
 		} else {
 			return false;
 		}
-	}
-
-	public function paid()
-	{
-		if ($this->orderable)
-			return $this->orderable->paid();
-		else
-			return false;
 	}
 
 	public function type()

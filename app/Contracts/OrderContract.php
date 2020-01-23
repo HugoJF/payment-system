@@ -8,8 +8,6 @@ interface OrderContract
 {
 	public function recheck();
 
-	public function paid();
-
 	public function units(Order $order);
 
 	public function paidUnits(Order $order);
