@@ -100,14 +100,6 @@ class Order extends Model implements OrderContract
 			return false;
 	}
 
-	public function status()
-	{
-		if ($this->orderable)
-			return $this->orderable->status();
-		else
-			return false;
-	}
-
 	public function type()
 	{
 		if ($this->orderable)

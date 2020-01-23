@@ -55,10 +55,10 @@ class SteamOrderController extends Controller
 
     public function show(SteamOrderService $service, Order $order)
     {
-        if ($order->status() === SteamOrder::ACCEPTED)
+        if ($order->orderable->status === SteamOrder::ACCEPTED)
             return view('orders.order-success', compact('order'));
 
-        if ($order->status() === SteamOrder::ACTIVE) {
+        if ($order->orderable->status === SteamOrder::ACTIVE) {
             $tradeofferId = $order->orderable->tradeoffer_id;
 
             return view('orders.order-pending', compact('order', 'tradeofferId'));

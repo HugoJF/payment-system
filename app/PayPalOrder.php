@@ -43,11 +43,6 @@ class PayPalOrder extends Model implements OrderContract
 		});
 	}
 
-	public function status()
-	{
-		return $this->status;
-	}
-
 	public function type()
 	{
 		return self::class;

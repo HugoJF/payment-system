@@ -14,8 +14,6 @@ interface OrderContract
 
 	public function paidUnits(Order $order);
 
-	public function status();
-
 	public function type();
 
 	public function canInit($order);
