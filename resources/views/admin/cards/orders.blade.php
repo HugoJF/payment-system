@@ -5,7 +5,7 @@
             <a class="btn btn-primary btn-sm" href="{{ route('admin.orders') }}">View all</a>
         </div>
     </div>
-    
+
     <div class="card-body">
         <table class="table">
             <thead>
@@ -26,22 +26,22 @@
                     <td>
                         <code>{{ $order->id }}</code>
                     </td>
-                    
+
                     <!-- Reason -->
                     <td>
                         <p>{{ $order->reason }}</p>
                     </td>
-                    
+
                     <!-- Paid -->
                     <td>
-                        <span class="badge badge-{{ $order->paid() ? 'success' : 'danger' }}">
+                        <span class="badge badge-{{ $order->paid ? 'success' : 'danger' }}">
                             R$ {{ number_format($order->paid_amount / 100, 2) }}
                             @if($order->paidUnits($order))
                                 ({{ $order->paidUnits($order) }})
                             @endif
                         </span>
                     </td>
-                    
+
                     <!-- Cost -->
                     <td>
                         <span class="badge badge-primary">
@@ -51,12 +51,12 @@
                             @endif
                         </span>
                     </td>
-                    
+
                     <!-- Created at -->
                     <td title="{{ $order->created_at }}">{{ $order->created_at->diffForHumans() }}</td>
-                    
+
                     <td><span class="badge badge-dark">{{ class_basename($order->type()) }}</span></td>
-                    
+
                     <!-- Actions -->
                     <td>
                         <div class="btn-group">
