@@ -22,7 +22,7 @@ class RecheckPendingOrders implements ShouldQueue
 
     public function handle()
     {
-        $pendingOrders = Order::whereColumn('paid_amount', '<', 'preset_amount')->get();
+        $pendingOrders = Order::unpaid()->get();
 
         info("Found {$pendingOrders->count()} pending orders...");
 

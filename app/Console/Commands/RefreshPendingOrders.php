@@ -54,8 +54,8 @@ class RefreshPendingOrders extends Command
 
         // TODO: update database to allow unpaid scope
         $pendingOrders = Order::query()
-            ->whereColumn('paid_amount', '<', 'preset_amount')
-            ->where('recheck_attempts', '<', $maxRechecks)
+            ->unpaid()
+            ->lessRechecksThan($maxRechecks)
             ->cursor();
 
         foreach ($pendingOrders as $order) {

@@ -4,6 +4,7 @@ namespace App;
 
 use App\Contracts\OrderContract;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model implements OrderContract
@@ -38,6 +39,21 @@ class Order extends Model implements OrderContract
 	public function orderable()
 	{
 		return $this->morphTo();
+	}
+
+    public function scopeUnpaid(Builder $query)
+    {
+        $query->whereColumn('paid_amount', '<', 'preset_amount');
+	}
+
+    public function scopePaid(Builder $query)
+    {
+        $query->whereColumn('paid_amount', '>=', 'preset_amount');
+	}
+
+    public function scopeLessRechecksThan(Builder $query, int $maxRechecks)
+    {
+        $query->where('recheck_attempts', '<', $maxRechecks);
 	}
 
 	public function getPaidUnitsAttribute()
