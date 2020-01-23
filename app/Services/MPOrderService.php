@@ -13,6 +13,7 @@ use App\MPOrder;
 use App\Order;
 use DB;
 use Exception;
+use Illuminate\Support\Collection;
 
 class MPOrderService
 {
@@ -25,7 +26,6 @@ class MPOrderService
         $mpOrder = MPOrder::make();
 
         $mpOrder->preference_id = $preference['response']['id'];
-        $mpOrder->amount = $this->getAmount($order);
 
         // Save first so we get an ID
         $mpOrder->save();
@@ -62,25 +62,15 @@ class MPOrderService
 
         info("Found {$results->count()} payments while searching with external reference: #{$order->base->id}");
 
-        // Sum approved payments
+        // Sum approved payments in R$ (not cents)
         $paidAmount = $this->calculatePaymentsPaidAmount($results);
 
         // Update order
-        DB::beginTransaction();
-        try {
-            $order->base->paid_amount = $paidAmount * 100;
-            $order->paid_amount = $paidAmount;
-
-            $order->base->save();
-            $order->save();
-        } catch (Exception $e) {
-            DB::rollBack();
-            report($e);
-        }
-        DB::commit();
+        $order->base->paid_amount = $paidAmount * 100;
+        $order->base->save();
     }
 
-    protected function calculatePaymentsPaidAmount($payments)
+    protected function calculatePaymentsPaidAmount(Collection $payments)
     {
         return $payments->reduce(function ($paid, $payment) {
             $id = $payment['id'];
