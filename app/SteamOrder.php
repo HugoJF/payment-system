@@ -74,11 +74,6 @@ class SteamOrder extends Model implements OrderContract
         return $this->tradeoffer_state === static::ACCEPTED;
     }
 
-    public function status()
-    {
-        return $this->tradeoffer_state;
-    }
-
     public function type()
     {
         return self::class;

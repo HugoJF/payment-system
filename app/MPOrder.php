@@ -36,11 +36,6 @@ class MPOrder extends Model implements OrderContract
 		return $this->paid_amount >= $this->amount;
 	}
 
-	public function status()
-	{
-		return $this->paid() ? 'paid' : 'pending';
-	}
-
 	public function type()
 	{
 		return self::class;

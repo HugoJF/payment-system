@@ -22,11 +22,11 @@ class PayPalOrderController extends Controller
 			return view('orders.order-success', compact('order'));
 
 		// Redirect from PayPal
-		if ($action === 'pending' && !$order->status())
+		if ($action === 'pending' && !$order->orderable->status)
 			return view('orders.order-pending', compact('order'));
 
 		// Missing any status
-		if (!$order->status()) {
+		if (!$order->orderable->status) {
 			$payUrl = $order->orderable->link;
 
 			return view('orders.order-summary', compact('payUrl', 'order'));

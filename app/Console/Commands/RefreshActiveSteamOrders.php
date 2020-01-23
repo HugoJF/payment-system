@@ -62,11 +62,9 @@ class RefreshActiveSteamOrders extends Command
 	 */
 	protected function refreshOrder($order): void
 	{
-		$oldState = $order->status();
 		$order->recheck();
-		$newState = $order->status();
 
-		$this->info("Refreshing order #{$order->base->id} with new state: $oldState -> $newState");
+		$this->info("Refreshing order #{$order->base->id}");
 
 		if ($this->tradeShouldBeCanceled($order)) {
 			$order->cancel();
