@@ -5,7 +5,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">Pedido <strong>#{{ $order->id }}</strong></div>
-                
+
                 <div class="card-body">
                     <table class="table">
                         <tbody>
@@ -16,7 +16,7 @@
                                 <code>{{ $order->id }}</code>
                             </td>
                         </tr>
-                        
+
                         <!-- Reason -->
                         <tr>
                             <td>Reason</td>
@@ -24,7 +24,7 @@
                                 <p>{{ $order->reason }}</p>
                             </td>
                         </tr>
-                        
+
                         <!-- Paid -->
                         <tr>
                             <td>Paid</td>
@@ -37,7 +37,7 @@
                                         </span>
                             </td>
                         </tr>
-                        
+
                         <!-- Cost -->
                         <tr>
                             <td>Cost</td>
@@ -50,13 +50,19 @@
                                         </span>
                             </td>
                         </tr>
-                        
+
                         <!-- Created at -->
                         <tr>
                             <td>Created at</td>
                             <td title="{{ $order->created_at }}">{{ $order->created_at->diffForHumans() }}</td>
                         </tr>
-                        
+
+                        <!-- Updated at -->
+                        <tr>
+                            <td>Updated at</td>
+                            <td title="{{ $order->updated_at }}">{{ $order->updated_at->diffForHumans() }}</td>
+                        </tr>
+
                         <!-- Type -->
                         <tr>
                             <td>Type</td>
@@ -73,7 +79,7 @@
         <div class="col-12">
             @includeWhen($order->type() === \App\PayPalOrder::class, 'admin.order.show-paypal-details')
             @includeWhen($order->type() === \App\MPOrder::class, 'admin.order.show-mercadopago-details')
-        
+
         </div>
     </div>
 @endsection

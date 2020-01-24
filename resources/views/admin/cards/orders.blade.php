@@ -57,11 +57,6 @@
                         {{ $order->created_at->diffForHumans() }}
                     </td>
 
-                    <!-- Updated at -->
-                    <td title="{{ $order->updated_at }}">
-                        {{ $order->updated_at->diffForHumans() }}
-                    </td>
-
                     <td><span class="badge badge-dark">{{ class_basename($order->type()) }}</span></td>
 
                     <!-- Actions -->
