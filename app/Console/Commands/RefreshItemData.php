@@ -81,7 +81,7 @@ class RefreshItemData extends Command
 			    $message = $e->getMessage();
 			    $code = $e->getCode();
 				$this->error("Error while saving item {$item->market_hash_name}: [$code] $message");
-				
+
 				logger()->warning("Error while saving item {$item->market_hash_name}", [
 					'item' => $item,
 				]);
@@ -92,7 +92,7 @@ class RefreshItemData extends Command
 	private function getBitSkinsData($tfa)
 	{
 		return cache()->remember('bit-skins-api', 60000, function () use ($tfa) {
-			$api = config('app.bit-skins-key');
+			$api = config('payment-system.bit-skins-key');
 			$result = Curl::to("https://bitskins.com/api/v1/get_all_item_prices/");
 			$result->withData([
 				'api_key' => $api,
