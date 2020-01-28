@@ -17,6 +17,7 @@ class CreateOrderRequest extends FormRequest
 			'reason'                => 'required',
 			'return_url'            => 'required',
 			'cancel_url'            => 'required',
+            'webhook_url'           => 'string|nullable',
 			'preset_amount'         => 'required|numeric',
 			'unit_price'            => 'required|numeric',
 			'unit_price_limit'      => 'required|numeric',
