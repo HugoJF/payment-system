@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use App\Classes\PayPalWrapper;
+use App\Events\PayPalOrderPaid;
 use App\Order;
 use App\PayPalOrder;
 use Exception;
@@ -29,9 +30,9 @@ class PayPalOrderService
 
         // Set checkout options
         $data['items'] = [[
-            'name' => $order->reason,
+            'name'  => $order->reason,
             'price' => $price,
-            'qty' => 1,
+            'qty'   => 1,
         ]];
         $data['invoice_id'] = "{$prefix}_{$id}";
         $data['invoice_description'] = "Pedido #$id";
@@ -82,7 +83,6 @@ class PayPalOrderService
         $ppOrder->token = $response['TOKEN'];
         $ppOrder->link = $response['paypal_link'];
         $ppOrder->save();
-
     }
 
     public function recheck(PayPalOrder $order)
@@ -91,6 +91,7 @@ class PayPalOrderService
         // Check if order has any token associated with it
         if (!$order->token) {
             info(sprintf('Failed rechecking order %s that has no PayPal token.', $order->base->id));
+
             return;
         }
 
@@ -100,6 +101,7 @@ class PayPalOrderService
         // Check if response was successful
         if (!in_array(strtoupper($response['ACK']), ['SUCCESS', 'SUCCESSWITHWARNING'])) {
             info('Failed to recheck PayPal order', compact('response'));
+
             return;
         }
 
@@ -134,6 +136,8 @@ class PayPalOrderService
         if ($order->paymentCompleted()) {
             $order->base->paid_amount = $order->base->preset_amount;
             $order->base->save();
+
+            event(new PayPalOrderPaid($order));
         }
     }
 }

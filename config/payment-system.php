@@ -11,6 +11,23 @@ return [
 
     'minimum-steam-item-value' => 30,
 
+    'webhooks' => [
+        'periods' => [
+            5 * $minutes,
+            15 * $minutes,
+            30 * $minutes,
+            1 * $hours,
+            2 * $hours,
+            4 * $hours,
+            6 * $hours,
+            12 * $hours,
+            1 * $days,
+            2 * $days,
+            4 * $days,
+            7 * $days,
+        ],
+    ],
+
     'rechecking-periods' => [
         1 * $minutes,
         2 * $minutes,

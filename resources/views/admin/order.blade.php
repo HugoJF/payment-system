@@ -68,18 +68,62 @@
                             <td>Type</td>
                             <td><span class="badge badge-dark">{{ class_basename($order->type()) }}</span></td>
                         </tr>
+
+                        <!-- Webhook URL -->
+                        <tr>
+                            <td>Webhook URL</td>
+                            <td><code>{{ $order->webhook_url }}</code></td>
+                        </tr>
+
+                        <!-- Webhook attempts -->
+                        <tr>
+                            <td>Webhook attempts</td>
+                            <td>
+                                @if($order->webhook_attempts <= 1)
+                                    <span class="badge badge-success">{{ $order->webhook_attempts }} attempts</span>
+                                @else
+                                    <span class="badge badge-warning">{{ $order->webhook_attempts }} attempts</span>
+                                @endif
+                            </td>
+                        </tr>
+
+                        <!-- Webhooked at -->
+                        <tr>
+                            <td>Webhooked at</td>
+                            <td title="{{ $order->webhooked_at }}">
+                                {{ $order->webhooked_at->diffForHumans() }}
+                            </td>
+                        </tr>
+
+                        <!-- Webhook attempted at -->
+                        <tr>
+                            <td>Webhook attempted at</td>
+                            <td title="{{ $order->webhook_attempted_at }}">
+                                {{ $order->webhook_attempted_at->diffForHumans() }}
+                            </td>
+                        </tr>
+
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
     <br/>
+
     <div class="row justify-content-center">
         <div class="col-12">
             @includeWhen($order->type() === \App\PayPalOrder::class, 'admin.order.show-paypal-details')
             @includeWhen($order->type() === \App\MPOrder::class, 'admin.order.show-mercadopago-details')
+        </div>
+    </div>
 
+    <br/>
+
+    <div class="row justify-content-center">
+        <div class="col-12">
+            @include('admin.cards.webhooks', ['webhooks' => $order->webhooks])
         </div>
     </div>
 @endsection

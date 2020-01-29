@@ -15,6 +15,7 @@
                 <th>Paid (units)</th>
                 <th>Cost (units)</th>
                 <th>Created at</th>
+                <th>Webhooked at</th>
                 <th>Type</th>
                 <th>Actions</th>
             </tr>
@@ -57,7 +58,26 @@
                         {{ $order->created_at->diffForHumans() }}
                     </td>
 
-                    <td><span class="badge badge-dark">{{ class_basename($order->type()) }}</span></td>
+                    <!-- Webhooked at -->
+                    @php
+                        $attemptClass = $order->webhook_attempts === 1 ? 'badge-success' : 'badge-warning';
+                    @endphp
+                    <td title="{{ $order->webhooked_at }}">
+                        @if($order->webhooked_at)
+                            <span class="badge {{ $attemptClass }}" title="{{ $order->webhook_attempts }} attempts">
+                                {{ $order->webhooked_at->diffForHumans() }}
+                            </span>
+                        @elseif($order->webhook_url)
+                            <span class="badge badge-danger">{{ $order->webhook_attempts }} attempts</span>
+                        @else
+                            <span class="badge badge-dark">N/A</span>
+                        @endif
+                    </td>
+
+                    <!-- Type -->
+                    <td>
+                        <span class="badge badge-dark">{{ class_basename($order->type()) }}</span>
+                    </td>
 
                     <!-- Actions -->
                     <td>
