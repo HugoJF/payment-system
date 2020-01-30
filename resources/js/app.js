@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'nprogress/nprogress.css'
 import Inventory from "./components/ui/Inventory";
 import Pusher from 'pusher-js';
 import PendingOrder from "./components/PendingOrder";
