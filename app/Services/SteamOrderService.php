@@ -13,6 +13,7 @@ use App\Order;
 use App\SteamItem;
 use App\SteamOrder;
 use Carbon\Carbon;
+use DB;
 use Exception;
 
 class SteamOrderService
@@ -37,8 +38,6 @@ class SteamOrderService
             $order->tradeoffer_state = $offer['state'];
 
         if ($order->accepted()) {
-            $service = app(SteamOrderService::class);
-
             $order->base->paid_amount = $order->base->preset_amount;
             $order->base->save();
         }
@@ -57,18 +56,27 @@ class SteamOrderService
         // Send tradeoffer
         $response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido #{$order->id} para \"{$order->reason}\"", $items);
 
-        // Update the order amount
-        $order->preset_amount = $value;
+        DB::beginTransaction();
+        try {
+            // Update the order amount
+            $order->preset_amount = $value;
 
-        // Update order details
-        $steamOrder = $order->orderable;
-        $steamOrder->encoded_items = json_encode((array)$items);
-        $steamOrder->tradeoffer_id = $response['id'];
-        $steamOrder->tradeoffer_state = $response['state'];
-        $steamOrder->tradeoffer_sent_at = Carbon::now();
+            // Update order details
+            $steamOrder = $order->orderable;
+            $steamOrder->encoded_items = json_encode((array) $items);
+            $steamOrder->tradeoffer_id = $response['id'];
+            $steamOrder->tradeoffer_state = $response['state'];
+            $steamOrder->tradeoffer_sent_at = Carbon::now();
 
-        $steamOrder->save();
-        $order->save();
+            $steamOrder->save();
+            $order->save();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            report($e);
+            throw $e;
+        }
     }
 
     public function getItemsValue($items)
