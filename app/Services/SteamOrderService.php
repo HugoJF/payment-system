@@ -110,9 +110,10 @@ class SteamOrderService
 
         // Filter negative priced items and that have no pricing data
         $inventory = $inventory->reject(function ($item) use ($prices) {
-            $itemName = $item['market_hash_name'];
+            // Some items are missing market_hash_name
+            $itemName = $item['market_hash_name'] ?? null;
 
-            return !$prices->get($itemName) || $prices[$itemName]->price < 0;
+            return !$itemName || !$prices->get($itemName) || $prices[$itemName]->price < 0;
         });
 
         // Merge inventory and pricing data
