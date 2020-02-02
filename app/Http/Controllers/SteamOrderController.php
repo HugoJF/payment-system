@@ -28,26 +28,19 @@ class SteamOrderController extends Controller
         return redirect()->route('orders.show', $order);
     }
 
-    public function execute(OrderService $orderService, SteamOrderService $service, Request $request, Order $order)
+    public function execute(SteamOrderService $service, Request $request, Order $order)
     {
         // Decode items (they are passed as json strings)
         $items = array_map(function ($item) {
             return json_decode($item, true);
         }, $request->input('items'));
 
-        $receivedValue = $service->getItemsValue($items);
-        $paidItems = $orderService->calculateUnits($order, $receivedValue);
-
-        if ($paidItems < $order->min_units) {
-            flash()->error("Pedido abaixo da quantidade mínima de $order->min_units!");
-
-            return redirect()->route('orders.show', $order);
-        }
-
         try {
             $service->execute($order, $items);
         } catch (Exception $e) {
             flash()->error($e->getMessage());
+
+            return back();
         }
 
         return redirect()->route('orders.show', $order);
@@ -55,10 +48,10 @@ class SteamOrderController extends Controller
 
     public function show(SteamOrderService $service, Order $order)
     {
-        if ($order->orderable->status === SteamOrder::ACCEPTED)
+        if ($order->orderable->tradeoffer_state === SteamOrder::ACCEPTED)
             return view('orders.order-success', compact('order'));
 
-        if ($order->orderable->status === SteamOrder::ACTIVE) {
+        if ($order->orderable->tradeoffer_state === SteamOrder::ACTIVE) {
             $tradeofferId = $order->orderable->tradeoffer_id;
 
             return view('orders.order-pending', compact('order', 'tradeofferId'));

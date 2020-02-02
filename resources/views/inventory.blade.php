@@ -1,3 +1,7 @@
+@php
+    $avatar = false;
+@endphp
+
 @extends('layouts.app')
 
 @section('content')

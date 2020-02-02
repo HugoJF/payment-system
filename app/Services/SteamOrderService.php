@@ -10,6 +10,7 @@ namespace App\Services;
 
 use App\Classes\SteamAccount;
 use App\Order;
+use App\OrderService;
 use App\SteamItem;
 use App\SteamOrder;
 use Carbon\Carbon;
@@ -51,7 +52,15 @@ class SteamOrderService
 
     public function execute(Order $order, $items)
     {
-        $value = $this->getItemsValue($items);
+        /** @var OrderService $orderService */
+        $orderService = app(OrderService::class);
+
+        $value = $this->getItemsValue($order->payer_steam_id, $items);
+        $paidItems = $orderService->calculateUnits($order, $value);
+
+        if ($paidItems < $order->min_units) {
+            throw new Exception("Pedido abaixo da quantidade mínima de $order->min_units!");
+        }
 
         // Send tradeoffer
         $response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido #{$order->id} para \"{$order->reason}\"", $items);
@@ -66,7 +75,7 @@ class SteamOrderService
             $steamOrder->encoded_items = json_encode((array) $items);
             $steamOrder->tradeoffer_id = $response['id'];
             $steamOrder->tradeoffer_state = $response['state'];
-            $steamOrder->tradeoffer_sent_at = Carbon::now();
+            $steamOrder->tradeoffer_sent_at = now();
 
             $steamOrder->save();
             $order->save();
@@ -79,11 +88,17 @@ class SteamOrderService
         }
     }
 
-    public function getItemsValue($items)
+    public function getItemsValue(string $steamid, array $items)
     {
-        $inventory = $this->mergePricingData($items);
+        $inventory = SteamAccount::getInventory($steamid);
+        $items = collect($items);
 
-        return $inventory->sum('price');
+        // Filter the entire user inventory to only requested items
+        $items = collect($inventory)->keyBy('assetid')->only($items->pluck('assetid'));
+
+        $data = $this->mergePricingData($items);
+
+        return $data->sum('price');
     }
 
     public function getInventory($steamid)
@@ -104,24 +119,22 @@ class SteamOrderService
         if (SteamItem::count() === 0)
             throw new Exception('Empty SteamItem table, fill it...');
 
-
         // Pluck market_hash_names from user inventory
         $requestedItems = $inventory->pluck('market_hash_name');
 
         // Fetch pricing data from user inventory
         $prices = SteamItem::query()
-            ->whereIn('market_hash_name', $requestedItems)
-            ->where('price', '>', config('payment-system.minimum-steam-item-value', 30))
-            ->get()
-            ->keyBy('market_hash_name');
-
+                           ->whereIn('market_hash_name', $requestedItems)
+                           ->where('price', '>', config('payment-system.minimum-steam-item-value', 30))
+                           ->get()
+                           ->keyBy('market_hash_name');
 
         // Filter negative priced items and that have no pricing data
         $inventory = $inventory->reject(function ($item) use ($prices) {
             // Some items are missing market_hash_name
             $itemName = $item['market_hash_name'] ?? null;
 
-            return !$itemName || !$prices->get($itemName) || $prices[$itemName]->price < 0;
+            return !$itemName || !$prices->get($itemName) || $prices[ $itemName ]->price < 0;
         });
 
         // Merge inventory and pricing data
@@ -134,7 +147,7 @@ class SteamOrderService
     {
         $item = collect($item);
         $itemName = $item['market_hash_name'];
-        $price = $prices[$itemName];
+        $price = $prices[ $itemName ];
 
         $itemFields = ['appid', 'contextid', 'assetid'];
         $dataFields = ['price', 'icon_url'];
