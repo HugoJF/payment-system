@@ -26,7 +26,7 @@
     <div class="flex flex-col m-auto lg:w-1/2 xl:{{ $width }} w-full justify-center bg-grey-lightest border-0 border-{{ $color }}-dark rounded-lg shadow-lg overflow-hidden">
         @yield('content')
 
-        @if(!$topError)
+        @if($topError)
             @include('flash::message')
         @endif
 
@@ -34,7 +34,7 @@
             <div class="trans h-full w-full bg-{{ $color }}-dark"></div>
         </div>
 
-        @if($topError)
+        @if(!$topError)
             @include('flash::message')
         @endif
     </div>
