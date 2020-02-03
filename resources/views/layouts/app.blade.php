@@ -17,17 +17,26 @@
 @php
     $width = $width ?? 'w-1/3';
     $color = $color ?? 'grey';
+    $avatar = $avatar ?? true;
+    $topError = $topError ?? false;
 @endphp
 
 <div class="flex flex-col items-stretch justify-center p-6 md:p-12 sm:my-32">
     @include('avatar')
     <div class="flex flex-col m-auto lg:w-1/2 xl:{{ $width }} w-full justify-center bg-grey-lightest border-0 border-{{ $color }}-dark rounded-lg shadow-lg overflow-hidden">
         @yield('content')
-        @include('flash::message')
+
+        @if(!$topError)
+            @include('flash::message')
+        @endif
 
         <div class="h-4 w-full">
             <div class="trans h-full w-full bg-{{ $color }}-dark"></div>
         </div>
+
+        @if($topError)
+            @include('flash::message')
+        @endif
     </div>
 </div>
 <script src="{{ mix('/js/app.js') }}"></script>

@@ -1,5 +1,6 @@
 @php
     $avatar = false;
+    $topError = true;
 @endphp
 
 @extends('layouts.app')
