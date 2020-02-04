@@ -149,7 +149,7 @@ class SteamOrderService
         $itemName = $item['market_hash_name'];
         $price = $prices[ $itemName ];
 
-        $itemFields = ['appid', 'contextid', 'assetid'];
+        $itemFields = ['market_hash_name', 'appid', 'contextid', 'assetid'];
         $dataFields = ['price', 'icon_url'];
 
         $itemData = $item->only($itemFields);
