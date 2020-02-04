@@ -23,20 +23,22 @@
 
 <div class="flex flex-col items-stretch justify-center p-6 md:p-12 sm:my-32">
     @include('avatar')
-    <div class="flex flex-col m-auto lg:w-1/2 xl:{{ $width }} w-full justify-center bg-grey-lightest border-0 border-{{ $color }}-dark rounded-lg shadow-lg overflow-hidden">
-        @yield('content')
 
+    <div class="flex flex-col m-auto lg:w-1/2 xl:{{ $width }} w-full justify-center bg-grey-lightest border-0 border-{{ $color }}-dark rounded-lg shadow-lg overflow-hidden">
         @if($topError)
             @include('flash::message')
         @endif
 
-        <div class="h-4 w-full">
-            <div class="trans h-full w-full bg-{{ $color }}-dark"></div>
-        </div>
+        @yield('content')
 
         @if(!$topError)
             @include('flash::message')
         @endif
+
+        <!-- Accent bar -->
+        <div class="h-4 w-full">
+            <div class="trans h-full w-full bg-{{ $color }}-dark"></div>
+        </div>
     </div>
 </div>
 <script src="{{ mix('/js/app.js') }}"></script>
