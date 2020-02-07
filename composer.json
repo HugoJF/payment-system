@@ -16,7 +16,6 @@
         "laracasts/flash": "^3.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
-        "league/flysystem-aws-s3-v3": "^1.0",
         "livepixel/mercado-pago": "^1.0",
         "pusher/pusher-php-server": "^4.0",
         "sentry/sentry-laravel": "1.2.0",
