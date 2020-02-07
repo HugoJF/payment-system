@@ -23,25 +23,15 @@ class SendPendingWebhooks extends Command
     protected $description = 'Send any pending order webhooks';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->periods = config('payment-system.webhooks.periods');
-        $this->maxPeriods = count($this->periods);
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
+        $this->periods = config('payment-system.webhooks.periods');
+        $this->maxPeriods = count($this->periods);
+
         $pending = Order::query()
                         ->where('webhook_url', '!=', null)
                         ->where('webhooked_at', null)
