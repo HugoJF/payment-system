@@ -91,7 +91,11 @@
                         <tr>
                             <td>Webhooked at</td>
                             <td title="{{ $order->webhooked_at }}">
-                                {{ $order->webhooked_at->diffForHumans() }}
+                                @if($order->webhooked_at)
+                                    {{ $order->webhooked_at->diffForHumans() }}
+                                @else
+                                    N/A
+                                @endif
                             </td>
                         </tr>
 
@@ -99,7 +103,11 @@
                         <tr>
                             <td>Webhook attempted at</td>
                             <td title="{{ $order->webhook_attempted_at }}">
-                                {{ $order->webhook_attempted_at->diffForHumans() }}
+                                @if($order->webhook_attempted_at)
+                                    {{ $order->webhook_attempted_at->diffForHumans() }}
+                                @else
+                                    N/A
+                                @endif
                             </td>
                         </tr>
 
