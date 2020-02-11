@@ -35,8 +35,13 @@ class SteamOrderService
 
         $offer = SteamAccount::getTradeOffer($order->tradeoffer_id);
 
-        if ($offer && array_key_exists('state', $offer))
+        if (!$offer) {
+            return;
+        }
+
+        if ($offer && array_key_exists('state', $offer)) {
             $order->tradeoffer_state = $offer['state'];
+        }
 
         if ($order->accepted()) {
             $order->base->paid_amount = $order->base->preset_amount;
