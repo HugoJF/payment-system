@@ -10,6 +10,8 @@ export default function Inventory({csrf, order, inventory}) {
     const [price, setPrice] = useState(0);
     const selectedItems = useRef({});
 
+    inventory = JSON.parse(inventory);
+    order = JSON.parse(order);
     let items = Object.values(inventory);
 
     function onModifySelection(item, selected) {
