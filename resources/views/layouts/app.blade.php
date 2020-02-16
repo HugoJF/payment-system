@@ -12,7 +12,6 @@
     <!-- Styles -->
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
 </head>
-<body class="trans bg-grey-light font-sans">
 
 @php
     $width = $width ?? 'w-1/3';
@@ -21,17 +20,20 @@
     $topError = $topError ?? false;
 @endphp
 
+@javascript('pusherAppKey', $pusherAppKey)
+
+<body class="trans bg-grey-light font-sans">
 <div class="flex flex-col items-stretch justify-center p-6 md:p-12 sm:my-32">
     @include('avatar')
 
     <div class="flex flex-col m-auto lg:w-1/2 xl:{{ $width }} w-full justify-center bg-grey-lightest border-0 border-{{ $color }}-dark rounded-lg shadow-lg overflow-hidden">
-        @includeWhen($topError, 'flash::message')
+    @includeWhen($topError, 'flash::message')
 
-        @yield('content')
+    @yield('content')
 
-        @includeWhen(!$topError, 'flash::message')
+    @includeWhen(!$topError, 'flash::message')
 
-        <!-- Accent bar -->
+    <!-- Accent bar -->
         <div class="h-4 w-full">
             <div class="trans h-full w-full bg-{{ $color }}-dark"></div>
         </div>

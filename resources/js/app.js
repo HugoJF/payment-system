@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Inventory from "./components/ui/Inventory";
 import Pusher from 'pusher-js';
+import Inventory from "./components/ui/Inventory";
 import PendingOrder from "./components/PendingOrder";
 
-export const pusher = new Pusher('c658b2d0b66466dceb46', {
+console.log('Connecting Pusher to app', window['pusherAppKey']);
+
+export const pusher = new Pusher(window.pusherAppKey, {
     cluster: 'us2',
     forceTLS: true
 });
@@ -14,6 +16,7 @@ const mappings = {
     'pending-order': PendingOrder,
 };
 
+// TODO: figure out how to auto parse shit
 for (const [dataReact, Component] of Object.entries(mappings)) {
     let selector = `[data-react="${dataReact}"]`;
     let elements = document.querySelectorAll(selector);

@@ -6,6 +6,7 @@ use App\Observers\OrderObserver;
 use App\Order;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
 		$this->registerObservers();
 		$this->registerCustomRouteBindings();
 		$this->registerIdeHelper();
+		$this->registerViewComposers();
 	}
 
 	protected function registerObservers(): void
@@ -51,4 +53,11 @@ class AppServiceProvider extends ServiceProvider
 			$this->app->register(IdeHelperServiceProvider::class);
 		}
 	}
+
+    protected function registerViewComposers()
+    {
+        View::composer('*', function ($view) {
+            $view->with('pusherAppKey', config('broadcasting.connections.pusher.key'));
+        });
+    }
 }
