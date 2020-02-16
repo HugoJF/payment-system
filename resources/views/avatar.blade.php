@@ -6,7 +6,7 @@
     @if($avatar ?? true)
         <div class="hidden absolute -translate-50 self-center pin-t p-3 justify-center items-center bg-white rounded-full shadow sm:flex">
             @if($avatarUrl ?? false)
-                <img class="h-32 w-32 rounded-full" src="{{ $avatarUrl }}"/>
+                <img class="h-32 w-32 rounded-full" src="{{ $avatarUrl }}" alt="Steam avatar image"/>
             @else
                 <div class="h-32 w-32"></div>
             @endif

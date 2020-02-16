@@ -25,15 +25,11 @@
     @include('avatar')
 
     <div class="flex flex-col m-auto lg:w-1/2 xl:{{ $width }} w-full justify-center bg-grey-lightest border-0 border-{{ $color }}-dark rounded-lg shadow-lg overflow-hidden">
-        @if($topError)
-            @include('flash::message')
-        @endif
+        @includeWhen($topError, 'flash::message')
 
         @yield('content')
 
-        @if(!$topError)
-            @include('flash::message')
-        @endif
+        @includeWhen(!$topError, 'flash::message')
 
         <!-- Accent bar -->
         <div class="h-4 w-full">

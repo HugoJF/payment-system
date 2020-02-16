@@ -35,7 +35,7 @@
 
                     <!-- Paid -->
                     <td>
-                        <span class="badge badge-{{ $order->paid ? 'success' : 'danger' }}">
+                        <span class="badge {{ $order->paid ? 'badge-success' : 'badge-danger' }}">
                             R$ {{ number_format($order->paid_amount / 100, 2) }}
                             @if($order->paidUnits($order))
                                 ({{ $order->paidUnits($order) }})
@@ -68,9 +68,13 @@
                                 {{ $order->webhooked_at->diffForHumans() }}
                             </span>
                         @elseif($order->webhook_url)
-                            <span class="badge badge-danger">{{ $order->webhook_attempts }} attempts</span>
+                            <span class="badge badge-danger">
+                                {{ $order->webhook_attempts }} attempts
+                            </span>
                         @else
-                            <span class="badge badge-dark">N/A</span>
+                            <span class="badge badge-dark">
+                                N/A
+                            </span>
                         @endif
                     </td>
 

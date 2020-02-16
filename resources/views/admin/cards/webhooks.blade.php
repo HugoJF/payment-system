@@ -1,8 +1,7 @@
 <div class="card">
     <div class="card-header d-flex align-items-center justify-content-between">
         <div>Webhooks</div>
-        <div>
-        </div>
+        <div></div> <!-- Empty to avoid centering -->
     </div>
 
     <div class="card-body">
@@ -47,7 +46,9 @@
 
                     <!-- Created at -->
                     <td>
-                        <span title="{{ $webhook->created_at }}">{{ $webhook->created_at->diffForHumans() }}</span>
+                        <span title="{{ $webhook->created_at }}">
+                            {{ $webhook->created_at->diffForHumans() }}
+                        </span>
                     </td>
                 </tr>
             @endforeach
