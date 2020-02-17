@@ -3,9 +3,12 @@
 namespace App\Providers;
 
 use App\Events\MPOrderPaid;
+use App\Events\MPOrderUpdated;
 use App\Events\OrderPaid;
 use App\Events\PayPalOrderPaid;
+use App\Events\PayPalOrderUpdated;
 use App\Events\SteamOrderPaid;
+use App\Events\SteamOrderUpdated;
 use App\Listeners\DispatchSendOrderPaidWebhook;
 use App\Listeners\TriggerBaseOrderPaid;
 use Illuminate\Support\Facades\Event;
@@ -21,13 +24,23 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        MPOrderPaid::class => [
+        MPOrderPaid::class     => [
             TriggerBaseOrderPaid::class,
         ],
         PayPalOrderPaid::class => [
             TriggerBaseOrderPaid::class,
         ],
-        SteamOrderPaid::class => [
+        SteamOrderPaid::class  => [
+            TriggerBaseOrderPaid::class,
+        ],
+
+        MPOrderUpdated::class     => [
+            TriggerBaseOrderPaid::class,
+        ],
+        PayPalOrderUpdated::class => [
+            TriggerBaseOrderPaid::class,
+        ],
+        SteamOrderUpdated::class  => [
             TriggerBaseOrderPaid::class,
         ],
 
@@ -48,7 +61,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
         //
     }
 }

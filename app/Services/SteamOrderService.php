@@ -45,12 +45,13 @@ class SteamOrderService
 
         if ($order->accepted()) {
             $order->base->paid_amount = $order->base->preset_amount;
-            $order->base->save();
         }
 
         $order->touch();
+        $order->base->touch();
 
         $order->save();
+        $order->base->save();
 
         return $offer;
     }

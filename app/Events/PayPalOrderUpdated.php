@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\MPOrder;
+use App\PayPalOrder;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -11,7 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class MPOrderPaid extends OrderEvent
+class PayPalOrderUpdated extends OrderEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,7 +20,7 @@ class MPOrderPaid extends OrderEvent
      *
      * @return void
      */
-    public function __construct(MPOrder $order)
+    public function __construct(PayPalOrder $order)
     {
         $this->setBaseOrder($order->base);
     }

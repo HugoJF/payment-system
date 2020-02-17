@@ -13,6 +13,6 @@
 
         <p class="text-sm font-light text-grey tracking-normal">Estamos verificando o seu pedido! Por favor aguarde até 1 minuto.</p>
 
-        <div id="pending-order" class="mt-1 flex flex-col items-center" data-order="{{ $order->id }}"></div>
+        <div data-react="pending-order" class="mt-1 flex flex-col items-center" data-id="{{ $order->id }}"></div>
     </div>
 @endsection
