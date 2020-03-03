@@ -24,15 +24,13 @@ Auth::routes();
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
-	Route::get('/home', 'HomeController@home')->name('admin.home');
-	Route::get('/', 'HomeController@index')->name('admin.index');
-
+    Route::get('/', 'HomeController@index')->name('admin.index');
+    Route::get('/home', 'HomeController@home')->name('admin.home');
 	Route::get('orders', 'HomeController@orders')->name('admin.orders');
 
-	Route::get('orders/{order}/recheck', 'HomeController@recheck')->name('admin.orders.recheck');
+    Route::get('orders/{order}', 'HomeController@show')->name('admin.orders.show');
+    Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
+    Route::get('orders/{order}/recheck', 'HomeContr oller@recheck')->name('admin.orders.recheck');
 
-	Route::get('orders/{order}', 'HomeController@show')->name('admin.orders.show');
-	Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
-
-	Route::patch('orders/{order}', 'HomeController@update')->name('admin.orders.update');
+    Route::patch('orders/{order}', 'HomeController@update')->name('admin.orders.update');
 });

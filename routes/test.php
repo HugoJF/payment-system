@@ -33,6 +33,7 @@ Route::get('create-order', function () {
     $order->max_units = 900;
 
     $order->webhook_url = 'https://webhook.site/8aff0bf3-1795-41c8-90dd-aedd24e747c6';
+    $order->view_url = 'https://google.com/';
 
     $order->save();
 

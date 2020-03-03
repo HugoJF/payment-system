@@ -25,7 +25,9 @@
                 <tr>
                     <!-- ID -->
                     <td>
-                        <code>{{ $order->id }}</code>
+                        <a href="{{ route('admin.orders.show', $order) }}">
+                            <code>{{ $order->id }}</code>
+                        </a>
                     </td>
 
                     <!-- Reason -->
@@ -84,10 +86,12 @@
                     </td>
 
                     <!-- Actions -->
-                    <td>
+                    <td class="d-flex justify-content-end">
                         <div class="btn-group">
+                            @if($order->view_url)
+                                <a class="btn btn-sm btn-outline-primary" href="{{ $order->view_url }}">View</a>
+                            @endif
                             <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.orders.recheck', $order) }}">Recheck</a>
-                            <a class="btn btn-sm btn-primary" href="{{ route('admin.orders.show', $order) }}">Info</a>
                             <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.orders.edit', $order) }}">Edit</a>
                         </div>
                     </td>
