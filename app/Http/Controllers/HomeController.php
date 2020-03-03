@@ -57,9 +57,6 @@ class HomeController extends Controller
 	{
 		$order->recheck();
 
-		$id = e($order->id);
-		flash()->success("Rechecked order $id.");
-
 		return back();
 	}
 }

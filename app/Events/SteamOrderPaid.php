@@ -11,11 +11,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class SteamOrderPaid implements OrderEvent
+class SteamOrderPaid extends OrderEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $order;
 
     /**
      * Create a new event instance.
@@ -24,7 +22,7 @@ class SteamOrderPaid implements OrderEvent
      */
     public function __construct(SteamOrder $order)
     {
-        $this->order = $order;
+        $this->setBaseOrder($order->base);
     }
 
     /**
@@ -34,11 +32,11 @@ class SteamOrderPaid implements OrderEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new Channel('orders');
     }
 
-    public function getBaseOrder()
+    public function broadcastAs()
     {
-        return $this->order->base;
+        return $this->order->id;
     }
 }

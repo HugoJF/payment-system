@@ -29,12 +29,12 @@
                         <tr>
                             <td>Paid</td>
                             <td>
-                                        <span class="badge badge-primary">
-                                            R$ {{ number_format($order->paid_amount / 100, 2) }}
-                                            @if($order->units($order))
-                                                ({{ $order->units($order) }})
-                                            @endif
-                                        </span>
+                                <span class="badge badge-primary">
+                                    R$ {{ number_format($order->paid_amount / 100, 2) }}
+                                    @if($order->units($order))
+                                        ({{ $order->units($order) }})
+                                    @endif
+                                </span>
                             </td>
                         </tr>
 
@@ -42,12 +42,12 @@
                         <tr>
                             <td>Cost</td>
                             <td>
-                                        <span class="badge badge-primary">
-                                            R$ {{ number_format($order->preset_amount / 100, 2)}}
-                                            @if($order->paidUnits($order))
-                                                ({{ $order->paidUnits($order) }})
-                                            @endif
-                                        </span>
+                                <span class="badge badge-primary">
+                                    R$ {{ number_format($order->preset_amount / 100, 2)}}
+                                    @if($order->paidUnits($order))
+                                        ({{ $order->paidUnits($order) }})
+                                    @endif
+                                </span>
                             </td>
                         </tr>
 
@@ -91,7 +91,11 @@
                         <tr>
                             <td>Webhooked at</td>
                             <td title="{{ $order->webhooked_at }}">
-                                {{ $order->webhooked_at->diffForHumans() }}
+                                @if($order->webhooked_at)
+                                    {{ $order->webhooked_at->diffForHumans() }}
+                                @else
+                                    N/A
+                                @endif
                             </td>
                         </tr>
 
@@ -99,10 +103,13 @@
                         <tr>
                             <td>Webhook attempted at</td>
                             <td title="{{ $order->webhook_attempted_at }}">
-                                {{ $order->webhook_attempted_at->diffForHumans() }}
+                                @if($order->webhook_attempted_at)
+                                    {{ $order->webhook_attempted_at->diffForHumans() }}
+                                @else
+                                    N/A
+                                @endif
                             </td>
                         </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -110,18 +117,16 @@
         </div>
     </div>
 
-    <br/>
-
-    <div class="row justify-content-center">
+    <!-- Specific order details -->
+    <div class="mt-4 row justify-content-center">
         <div class="col-12">
             @includeWhen($order->type() === \App\PayPalOrder::class, 'admin.order.show-paypal-details')
             @includeWhen($order->type() === \App\MPOrder::class, 'admin.order.show-mercadopago-details')
         </div>
     </div>
 
-    <br/>
-
-    <div class="row justify-content-center">
+    <!-- Webhook details -->
+    <div class="mt-4 justify-content-center">
         <div class="col-12">
             @include('admin.cards.webhooks', ['webhooks' => $order->webhooks])
         </div>

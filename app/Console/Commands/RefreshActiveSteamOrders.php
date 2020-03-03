@@ -61,14 +61,15 @@ class RefreshActiveSteamOrders extends Command
 	 */
 	protected function refreshOrder($order): void
 	{
-		$order->recheck();
+        if ($this->tradeShouldBeCanceled($order)) {
+            $order->cancel();
 
-		$this->info("Refreshing order #{$order->base->id}");
+            $this->warn('Cancelling order #' . $order->base->id . ' as it expired!');
+        } else {
+            $order->recheck();
 
-		if ($this->tradeShouldBeCanceled($order)) {
-			$order->cancel();
-			$this->warn('Cancelling order #' . $order->base->id . ' as it expired!');
-		}
+            $this->info("Refreshing order #{$order->base->id}");
+        }
 	}
 
 	protected function tradeShouldBeCanceled(SteamOrder $order)

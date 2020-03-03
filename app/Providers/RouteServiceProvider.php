@@ -26,10 +26,9 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-
-		Route::bind('order', function ($value) {
-			return Order::where('id', $value)->first();
-		});
+        Route::bind('order', function ($value) {
+            return Order::where('id', $value)->first();
+        });
     }
 
     /**
@@ -43,7 +42,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->mapTestRoutes();
     }
 
     /**
@@ -73,5 +72,21 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "test" routes for the application.
+     *
+     * These routes are only used for testing and only defined when not in production.
+     *
+     * @return void
+     */
+    protected function mapTestRoutes()
+    {
+        if (!app()->environment('production')) {
+            Route::middleware('web')
+                 ->name($this->namespace)
+                 ->group(base_path('routes/test.php'));
+        }
     }
 }

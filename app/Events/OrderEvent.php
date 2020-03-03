@@ -4,8 +4,17 @@ namespace App\Events;
 
 use App\Order;
 
-interface OrderEvent
+abstract class OrderEvent
 {
-    // TODO: this can be an abtract class since each order is from OrderContract
-    public function getBaseOrder();
+    protected $order;
+
+    public function setBaseOrder(Order $order)
+    {
+        $this->order = $order;
+    }
+
+    public function getBaseOrder()
+    {
+        return $this->order;
+    }
 }

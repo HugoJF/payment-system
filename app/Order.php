@@ -28,6 +28,7 @@ class Order extends Model implements OrderContract
         'return_url',
         'cancel_url',
         'webhook_url',
+        'view_url',
         'preset_amount',
         'payer_steam_id',
         'payer_tradelink',

@@ -25,7 +25,9 @@
                 <tr>
                     <!-- ID -->
                     <td>
-                        <code>{{ $order->id }}</code>
+                        <a href="{{ route('admin.orders.show', $order) }}">
+                            <code>{{ $order->id }}</code>
+                        </a>
                     </td>
 
                     <!-- Reason -->
@@ -35,7 +37,7 @@
 
                     <!-- Paid -->
                     <td>
-                        <span class="badge badge-{{ $order->paid ? 'success' : 'danger' }}">
+                        <span class="badge {{ $order->paid ? 'badge-success' : 'badge-danger' }}">
                             R$ {{ number_format($order->paid_amount / 100, 2) }}
                             @if($order->paidUnits($order))
                                 ({{ $order->paidUnits($order) }})
@@ -68,9 +70,13 @@
                                 {{ $order->webhooked_at->diffForHumans() }}
                             </span>
                         @elseif($order->webhook_url)
-                            <span class="badge badge-danger">{{ $order->webhook_attempts }} attempts</span>
+                            <span class="badge badge-danger">
+                                {{ $order->webhook_attempts }} attempts
+                            </span>
                         @else
-                            <span class="badge badge-dark">N/A</span>
+                            <span class="badge badge-dark">
+                                N/A
+                            </span>
                         @endif
                     </td>
 
@@ -80,10 +86,12 @@
                     </td>
 
                     <!-- Actions -->
-                    <td>
+                    <td class="d-flex justify-content-end">
                         <div class="btn-group">
+                            @if($order->view_url)
+                                <a class="btn btn-sm btn-outline-primary" href="{{ $order->view_url }}">View</a>
+                            @endif
                             <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.orders.recheck', $order) }}">Recheck</a>
-                            <a class="btn btn-sm btn-primary" href="{{ route('admin.orders.show', $order) }}">Info</a>
                             <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.orders.edit', $order) }}">Edit</a>
                         </div>
                     </td>

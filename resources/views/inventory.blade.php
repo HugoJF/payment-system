@@ -8,11 +8,11 @@
 @section('content')
     <form method="POST" action="{{ route('orders.steam.execute', $order) }}">
         @csrf
-        <div id="inventory"></div>
+        <div
+            data-react="inventory"
+            data-inventory='@json($items)'
+            data-order='@json($order)'
+            data-csrf="{{ csrf_token() }}"
+        ></div>
     </form>
-    <script>
-        let inventory = @json($items);
-        let order = @json($order);
-        let csrf = '{{ csrf_token() }}';
-    </script>
 @endsection
