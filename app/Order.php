@@ -69,12 +69,18 @@ class Order extends Model implements OrderContract
 
     public function getPaidUnitsAttribute()
     {
-        return $this->paidUnits($this);
+        /** @var OrderService $service */
+        $service = app(OrderService::class);
+
+        return $service->calculateUnits($this, $this->paid_amount);
     }
 
     public function getUnitsAttribute()
     {
-        return $this->units($this);
+        /** @var OrderService $service */
+        $service = app(OrderService::class);
+
+        return $service->calculateUnits($this, $this->preset_amount);
     }
 
     public function getPaidAttribute()
@@ -125,23 +131,5 @@ class Order extends Model implements OrderContract
             return $this->orderable->type();
         else
             return false;
-    }
-
-    public function units(Order $order)
-    {
-        if ($this->orderable) {
-            return $this->orderable->units($this);
-        } else {
-            return false;
-        }
-    }
-
-    public function paidUnits(Order $order)
-    {
-        if ($this->orderable) {
-            return $this->orderable->paidUnits($this);
-        } else {
-            return false;
-        }
     }
 }

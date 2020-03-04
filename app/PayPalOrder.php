@@ -52,14 +52,4 @@ class PayPalOrder extends Model implements OrderContract
 	{
 		return true;
 	}
-
-	public function units(Order $order)
-	{
-		return null;
-	}
-
-	public function paidUnits(Order $order)
-	{
-		return null;
-	}
 }

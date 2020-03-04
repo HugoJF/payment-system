@@ -83,20 +83,4 @@ class SteamOrder extends Model implements OrderContract
     {
         return isset($order->payer_tradelink);
     }
-
-    public function units(Order $base)
-    {
-        /** @var OrderService $service */
-        $service = app(OrderService::class);
-
-        return $service->calculateUnits($base, $base->preset_amount);
-    }
-
-    public function paidUnits(Order $base)
-    {
-        /** @var OrderService $service */
-        $service = app(OrderService::class);
-
-        return $service->calculateUnits($base, $base->paid_amount);
-    }
 }
