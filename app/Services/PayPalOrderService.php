@@ -125,11 +125,10 @@ class PayPalOrderService
         $order->transaction_id = $response['TRANSACTIONID'];
 
         // Retrieve payment details
-        $paymentDetails = PayPalWrapper::getTransactionDetails($order->transaction_id);
-        $status = $paymentDetails['PAYMENTSTATUS'];
+        $transaction = PayPalWrapper::getTransactionDetails($order->transaction_id);
 
         // Update database
-        $order->status = $status;
+        $order->status = $transaction['PAYMENTSTATUS'];
         $order->save();
 
         // Update base order
