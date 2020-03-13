@@ -14,7 +14,7 @@
 
         <p class="flex mt-8 pb-4 justify-center items-baseline text-center text-5xl">
             <span class="mr-1 text-3xl text-grey font-normal">R$</span>
-            <span class="text-grey-darkest font-semibold">{{ round($order->preset_amount / 100, 2) }}</span>
+            <span class="text-grey-darkest font-semibold">{{ number_format($order->preset_amount / 100, 2) }}</span>
         </p>
 
         @include('ui.button', ['payUrl' => $payUrl, 'title' => 'Pagar'])
