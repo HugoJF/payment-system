@@ -14,22 +14,23 @@ class CreateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'reason'                => 'required',
-            'return_url'            => 'required',
-            'cancel_url'            => 'required',
-            'webhook_url'           => 'nullable|string',
-            'view_url'              => 'nullable|string',
-            'preset_amount'         => 'required|numeric',
-            'unit_price'            => 'required|numeric',
-            'unit_price_limit'      => 'required|numeric',
-            'discount_per_unit'     => 'required|numeric',
-            'min_units'             => 'required|numeric',
-            'max_units'             => 'required|numeric',
-            'avatar'                => 'string|nullable',
-            'payer_steam_id'        => 'string|nullable',
-            'payer_tradelink'       => 'string|nullable',
+            'email' => 'email|nullable',
+            'reason' => 'required',
+            'return_url' => 'required',
+            'cancel_url' => 'required',
+            'webhook_url' => 'nullable|string',
+            'view_url' => 'nullable|string',
+            'preset_amount' => 'required|numeric',
+            'unit_price' => 'required|numeric',
+            'unit_price_limit' => 'required|numeric',
+            'discount_per_unit' => 'required|numeric',
+            'min_units' => 'required|numeric',
+            'max_units' => 'required|numeric',
+            'avatar' => 'string|nullable',
+            'payer_steam_id' => 'string|nullable',
+            'payer_tradelink' => 'string|nullable',
             'product_name_singular' => 'string|nullable',
-            'product_name_plural'   => 'string|nullable',
+            'product_name_plural' => 'string|nullable',
         ];
     }
 }
