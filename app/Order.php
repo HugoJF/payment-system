@@ -147,6 +147,7 @@ class Order extends Model implements OrderContract
         }
     }
 
+    /** @deprecated */
     public function recheck()
     {
         if ($this->orderable) {

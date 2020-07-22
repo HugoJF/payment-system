@@ -40,14 +40,16 @@ class OrderController extends Controller
      * @param Order        $order
      * @param null         $action
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|mixed
+     * @return \Illuminate\View\View
      * @throws Exception
      */
     public function show(OrderService $service, Order $order, $action = null)
     {
-        $type = $order->type();
+        if ($order->paid) {
+            return view('orders.order-success', compact('order'));
+        }
 
-        if (!$type) {
+        if (!($type = $order->type())) {
             info("Order $order->id is not initialized, showing payment selector screen");
 
             return view('payment-selector', compact('order'));

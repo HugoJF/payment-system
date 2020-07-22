@@ -11,9 +11,7 @@ class OrderApiController extends Controller
 {
     public function store(OrderService $service, CreateOrderRequest $request)
     {
-        $order = $service->make($request->validated());
-
-        return $order;
+        return $service->make($request->validated());
     }
 
     public function show(Order $order)

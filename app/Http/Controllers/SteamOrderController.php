@@ -49,10 +49,6 @@ class SteamOrderController extends Controller
 
     public function show(SteamOrderService $service, Order $order)
     {
-        if ($order->orderable->tradeoffer_state === SteamOrder::ACCEPTED) {
-            return view('orders.order-success', compact('order'));
-        }
-
         if ($order->orderable->tradeoffer_state === SteamOrder::ACTIVE && !$order->orderable->tradeoffer_id) {
             return view('orders.order-pending', compact('order'));
         }
@@ -64,12 +60,10 @@ class SteamOrderController extends Controller
         }
 
         if (!$order->orderable->tradeoffer_sent_at) {
-            $items = $service->getInventory($order->payer_steam_id);
-
             return view('inventory', [
                 'color' => 'blue',
                 'width' => 'w-1/2',
-                'items' => $items,
+                'items' => $service->getInventory($order->payer_steam_id),
                 'order' => $order,
             ]);
         }

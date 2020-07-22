@@ -17,11 +17,6 @@ class PayPalOrderController extends Controller
 
     public function show(Order $order, $action = null)
     {
-        // Order updated to some status
-        if ($order->paid) {
-            return view('orders.order-success', compact('order'));
-        }
-
         // Redirect from PayPal
         if ($action === 'pending' && !$order->orderable->status) {
             return view('orders.order-pending', compact('order'));

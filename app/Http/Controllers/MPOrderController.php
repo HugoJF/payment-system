@@ -19,10 +19,6 @@ class MPOrderController extends Controller
 
     public function show(Order $order, $action = null)
     {
-        if ($order->paid) {
-            return view('orders.order-success', compact('order'));
-        }
-
         if ($action === 'pending') {
             return view('orders.order-pending', compact('order'));
         }

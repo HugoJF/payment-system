@@ -41,6 +41,7 @@ class SendPendingWebhooks extends Command
 
         foreach ($pending as $order) {
             $this->info("Checking order #$order->id");
+
             if ($this->forceSend() || $this->shouldWebhook($order)) {
                 dispatch(new SendOrderPaidWebhook($order));
             }
