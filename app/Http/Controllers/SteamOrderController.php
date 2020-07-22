@@ -21,7 +21,7 @@ class SteamOrderController extends Controller
     public function init(SteamOrderService $service, Order $order)
     {
         if (empty($order->payer_tradelink)) {
-            throw new Exception('Unable to initialize order with Steam because it\'s missing the tradelink');
+            return redirect()->route('orders.show', $order);
         }
 
         $service->initialize($order);
@@ -54,9 +54,10 @@ class SteamOrderController extends Controller
         }
 
         if ($order->orderable->tradeoffer_state === SteamOrder::ACTIVE) {
-            $tradeofferId = $order->orderable->tradeoffer_id;
-
-            return view('orders.order-tradeoffer', compact('order', 'tradeofferId'));
+            return view('orders.order-tradeoffer', [
+                'order'        => $order,
+                'tradeofferId' => $order->orderable->tradeoffer_id,
+            ]);
         }
 
         if (!$order->orderable->tradeoffer_sent_at) {

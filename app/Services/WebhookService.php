@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 
 class WebhookService
 {
-    public function createHistory(Order $order, $response)
+    public function create(Order $order, $response)
     {
         $history = new WebhookHistory;
 

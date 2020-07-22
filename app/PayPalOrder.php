@@ -23,9 +23,7 @@ class PayPalOrder extends Model implements OrderContract
 
     public function paymentCompleted()
     {
-        return collect(['Completed', 'Processed'])->contains(function ($value) {
-            return strcasecmp($this->status, $value) === 0;
-        });
+        return strcasecmp($this->status, 'PaymentActionCompleted') === 0;
     }
 
     /**************

@@ -76,7 +76,7 @@ class OrderService
 
         /** @var WebhookService $webhookService */
         $webhookService = app(WebhookService::class);
-        $webhookService->createHistory($order, $response);
+        $webhookService->create($order, $response);
     }
 
     public function getControllerByType($type)
