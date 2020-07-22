@@ -3,11 +3,10 @@
 namespace App\Observers;
 
 use App\Events\OrderPaid;
-use App\Events\OrderUpdated;
 use App\Order;
 use Illuminate\Support\Str;
 
-class OrderObserver
+class OrderRandomIdObserver
 {
     /**
      * Handle the order "creating" event.

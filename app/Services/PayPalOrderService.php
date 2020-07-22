@@ -135,12 +135,6 @@ class PayPalOrderService
         if ($order->paymentCompleted()) {
             $order->base->paid_amount = (int) (floatval($response['AMT']) * 100);
             $order->base->save();
-
-            $order->touch();
-
-            if ($order->isDirty('paid_amount')) {
-                event(new PayPalOrderPaid($order));
-            }
         }
 
         // Only trigger saved event after base order is updated.

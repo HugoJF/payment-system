@@ -29,16 +29,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        MPOrderPaid::class     => [
-            TriggerBaseOrderPaid::class,
-        ],
-        PayPalOrderPaid::class => [
-            TriggerBaseOrderPaid::class,
-        ],
-        SteamOrderPaid::class  => [
-            TriggerBaseOrderPaid::class,
-        ],
-
         OrderPaid::class     => [
             DispatchSendOrderPaidWebhook::class,
         ],

@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use App\MPOrder;
 use App\Observers\MPOrderObserver;
-use App\Observers\OrderObserver;
+use App\Observers\OrderPaymentObserver;
+use App\Observers\OrderRandomIdObserver;
 use App\Observers\OrderOverpaymentObserver;
 use App\Observers\PayPalOrderObserver;
 use App\Observers\SteamOrderObserver;
@@ -46,11 +47,9 @@ class AppServiceProvider extends ServiceProvider
 
     protected function registerObservers(): void
     {
-        Order::observe(OrderObserver::class);
+        Order::observe(OrderRandomIdObserver::class);
+        Order::observe(OrderPaymentObserver::class);
         Order::observe(OrderOverpaymentObserver::class);
-        MPOrder::observe(MPOrderObserver::class);
-        PayPalOrder::observe(PayPalOrderObserver::class);
-        SteamOrder::observe(SteamOrderObserver::class);
     }
 
     protected function registerCustomRouteBindings(): void
