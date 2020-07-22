@@ -11,29 +11,29 @@ use Kris\LaravelFormBuilder\FormBuilder;
 
 class HomeController extends Controller
 {
-	public function index()
-	{
-		return redirect()->route('admin.home');
-	}
+    public function index()
+    {
+        return redirect()->route('admin.home');
+    }
 
-	public function home()
-	{
-		$orders = Order::query()->orderBy('created_at', 'DESC')->limit(5)->get();
+    public function home()
+    {
+        $orders = Order::query()->orderBy('created_at', 'DESC')->limit(5)->get();
 
-		return view('admin.home', compact('orders'));
-	}
+        return view('admin.home', compact('orders'));
+    }
 
-	public function orders()
-	{
-		$orders = Order::query()->orderBy('created_at', 'DESC')->paginate(10);
+    public function orders()
+    {
+        $orders = Order::query()->orderBy('created_at', 'DESC')->paginate(10);
 
-		return view('admin.orders', compact('orders'));
-	}
+        return view('admin.orders', compact('orders'));
+    }
 
-	public function show(Order $order)
-	{
-		return view('admin.order', compact('order'));
-	}
+    public function show(Order $order)
+    {
+        return view('admin.order', compact('order'));
+    }
 
     public function edit(OrderForms $forms, Order $order)
     {
@@ -53,10 +53,10 @@ class HomeController extends Controller
         return redirect()->route('admin.orders.show', $order);
     }
 
-	public function recheck(Order $order)
-	{
-		$order->recheck();
+    public function recheck(Order $order)
+    {
+        $order->recheck();
 
-		return back();
-	}
+        return back();
+    }
 }

@@ -45,30 +45,16 @@ class MockableWrapper
     }
 
     /**
-     * Gets a full path for the correct Mocking folder
+     * Mock method
      *
-     * @param $name - file name to be transformed to path
-     *
-     * @return string - path
+     * @param $request  - function name to be mocked
+     * @param $fileName - filename containing mock information
      */
-    protected static function getPathByName($name)
+    public static function mockByFile($request, $fileName)
     {
-        $folder = static::$folder;
+        $content = self::readFromFile($fileName);
 
-        return app_path("Mock/$folder/" . preg_replace('/[^A-Z0-9]/i', '-', $name));
-    }
-
-    /**
-     * Write content to mocking folder
-     *
-     * @param $name    - filename
-     * @param $content - content of mock
-     */
-    protected static function writeToFile($name, $content)
-    {
-        $file = fopen(self::getPathByName($name), 'w');
-        fwrite($file, json_encode($content));
-        fclose($file);
+        static::$responses[ $request ] = $content;
     }
 
     /**
@@ -89,32 +75,53 @@ class MockableWrapper
     }
 
     /**
-     * Mock method
+     * Gets a full path for the correct Mocking folder
      *
-     * @param $request  - function name to be mocked
-     * @param $fileName - filename containing mock information
+     * @param $name - file name to be transformed to path
+     *
+     * @return string - path
      */
-    public static function mockByFile($request, $fileName)
+    protected static function getPathByName($name)
     {
-        $content = self::readFromFile($fileName);
+        $folder = static::$folder;
 
-        static::$responses[ $request ] = $content;
+        return app_path("Mock/$folder/" . preg_replace('/[^A-Z0-9]/i', '-', $name));
     }
 
     /**
-     * Saves response to file (if saving is activated)
+     * @param $name      - the name of the calling function
+     * @param $arguments - arguments
      *
-     * @param $name     - filename to be saved
-     * @param $response - response contents
+     * @return mixed - return value of the calling function
      *
-     * @return mixed - response content
+     * @throws Exception - when the calling function could not be found
      */
-    public static function saveResponse($name, $response)
+    public static function __callStatic($name, $arguments)
     {
-        if (static::$saving)
-            self::writeToFile($name . microtime(true), $response);
+        // Check if call should be mocked
+        if (static::$mocking) {
+            $mock = static::getMockedResponse($name);
+            if ($mock) {
+                return $mock;
+            }
+        }
 
-        return $response;
+        // Build forward function names
+        $method = "_$name";
+        $function = "static::$method";
+
+        // Attempts to forward the call
+        if (!method_exists(static::class, $method)) {
+            throw new Exception("Function $function does not exists");
+        }
+
+        try {
+            $response = forward_static_call_array($function, $arguments);
+
+            return static::saveResponse($name, $response);
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -142,37 +149,32 @@ class MockableWrapper
     }
 
     /**
-     * @param $name      - the name of the calling function
-     * @param $arguments - arguments
+     * Saves response to file (if saving is activated)
      *
-     * @return mixed - return value of the calling function
+     * @param $name     - filename to be saved
+     * @param $response - response contents
      *
-     * @throws Exception - when the calling function could not be found
+     * @return mixed - response content
      */
-    public static function __callStatic($name, $arguments)
+    public static function saveResponse($name, $response)
     {
-        // Check if call should be mocked
-        if (static::$mocking) {
-            $mock = static::getMockedResponse($name);
-            if ($mock)
-                return $mock;
+        if (static::$saving) {
+            self::writeToFile($name . microtime(true), $response);
         }
 
-        // Build forward function names
-        $method = "_$name";
-        $function = "static::$method";
+        return $response;
+    }
 
-        // Attempts to forward the call
-        if (!method_exists(static::class, $method)) {
-            throw new Exception("Function $function does not exists");
-        }
-
-        try {
-            $response = forward_static_call_array($function, $arguments);
-
-            return static::saveResponse($name, $response);
-        } catch (Exception $e) {
-            return null;
-        }
-	}
+    /**
+     * Write content to mocking folder
+     *
+     * @param $name    - filename
+     * @param $content - content of mock
+     */
+    protected static function writeToFile($name, $content)
+    {
+        $file = fopen(self::getPathByName($name), 'w');
+        fwrite($file, json_encode($content));
+        fclose($file);
+    }
 }

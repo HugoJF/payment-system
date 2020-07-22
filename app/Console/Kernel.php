@@ -7,43 +7,43 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-	/**
-	 * The Artisan commands provided by your application.
-	 *
-	 * @var array
-	 */
-	protected $commands = [
-		//
-	];
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        //
+    ];
 
-	/**
-	 * Define the application's command schedule.
-	 *
-	 * @param  \Illuminate\Console\Scheduling\Schedule $schedule
-	 *
-	 * @return void
-	 */
-	protected function schedule(Schedule $schedule)
-	{
-		$schedule->command('steamorders:refresh')->everyMinute();
+    /**
+     * Define the application's command schedule.
+     *
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     *
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('steamorders:refresh')->everyMinute();
 
-		$schedule->command('orders:recheck')->everyMinute();
+        $schedule->command('orders:recheck')->everyMinute();
 
         $schedule->command('backup:clean')->daily()->at('04:00');
         $schedule->command('backup:run')->daily()->at('05:00');
 
         $schedule->command('webhooks:send')->everyFiveMinutes();
-	}
+    }
 
-	/**
-	 * Register the commands for the application.
-	 *
-	 * @return void
-	 */
-	protected function commands()
-	{
-		$this->load(__DIR__ . '/Commands');
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__ . '/Commands');
 
-		require base_path('routes/console.php');
-	}
+        require base_path('routes/console.php');
+    }
 }

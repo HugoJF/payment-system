@@ -36,9 +36,9 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-		if (app()->environment('production') && app()->bound('sentry') && $this->shouldReport($exception)){
-			app('sentry')->captureException($exception);
-		}
+        if (app()->environment('production') && app()->bound('sentry') && $this->shouldReport($exception)) {
+            app('sentry')->captureException($exception);
+        }
 
         parent::report($exception);
     }
@@ -46,8 +46,9 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param \Illuminate\Http\Request $request
+     * @param \Exception               $exception
+     *
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)

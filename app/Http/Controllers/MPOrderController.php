@@ -19,11 +19,13 @@ class MPOrderController extends Controller
 
     public function show(Order $order, $action = null)
     {
-        if ($order->paid)
+        if ($order->paid) {
             return view('orders.order-success', compact('order'));
+        }
 
-        if ($action === 'pending')
+        if ($action === 'pending') {
             return view('orders.order-pending', compact('order'));
+        }
 
         if ($order->orderable->preference_id) {
             $preference = MP2::get_preference($order->orderable->preference_id);

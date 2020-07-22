@@ -18,32 +18,6 @@ class PayPalOrderService
 {
 
     /**
-     * @param Order $order
-     *
-     * @return array
-     */
-    public static function getCheckoutCart(Order $order)
-    {
-        $id = $order->id;
-        $prefix = config('paypal.invoice_prefix');
-        $price = round($order->preset_amount / 100, 2);
-
-        // Set checkout options
-        $data['items'] = [[
-            'name'  => $order->reason,
-            'price' => $price,
-            'qty'   => 1,
-        ]];
-        $data['invoice_id'] = "{$prefix}_{$id}";
-        $data['invoice_description'] = "Pedido #$id";
-        $data['return_url'] = route('orders.show', [$order, 'pending']);
-        $data['cancel_url'] = route('orders.show', [$order, 'cancel']);
-        $data['total'] = $price;
-
-        return $data;
-    }
-
-    /**
      * @param $order
      *
      * @throws Exception
@@ -85,6 +59,32 @@ class PayPalOrderService
         $ppOrder->save();
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return array
+     */
+    public static function getCheckoutCart(Order $order)
+    {
+        $id = $order->id;
+        $prefix = config('paypal.invoice_prefix');
+        $price = round($order->preset_amount / 100, 2);
+
+        // Set checkout options
+        $data['items'] = [[
+            'name'  => $order->reason,
+            'price' => $price,
+            'qty'   => 1,
+        ]];
+        $data['invoice_id'] = "{$prefix}_{$id}";
+        $data['invoice_description'] = "Pedido #$id";
+        $data['return_url'] = route('orders.show', [$order, 'pending']);
+        $data['cancel_url'] = route('orders.show', [$order, 'cancel']);
+        $data['total'] = $price;
+
+        return $data;
+    }
+
     public function recheck(PayPalOrder $order)
     {
         // Check if order has any token associated with it
@@ -105,8 +105,9 @@ class PayPalOrderService
         }
 
         // Check if checkout has a payer
-        if (!array_key_exists('PAYERID', $response))
+        if (!array_key_exists('PAYERID', $response)) {
             return;
+        }
 
         // If there is no transaction, and this code is reached, execute transaction
         if (!array_key_exists('TRANSACTIONID', $response)) {
@@ -117,8 +118,9 @@ class PayPalOrderService
         }
 
         // If no transaction
-        if (!array_key_exists('TRANSACTIONID', $response))
+        if (!array_key_exists('TRANSACTIONID', $response)) {
             throw new Exception("There are no transaction ID associated with order {$order->base->id} TOKEN={$order->token}.");
+        }
 
         // Update order transaction
         $order->transaction_id = $response['TRANSACTIONID'];
@@ -136,7 +138,7 @@ class PayPalOrderService
 
             $order->touch();
 
-            if($order->isDirty('paid_amount')) {
+            if ($order->isDirty('paid_amount')) {
                 event(new PayPalOrderPaid($order));
             }
         }

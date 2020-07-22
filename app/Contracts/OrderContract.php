@@ -4,11 +4,11 @@ namespace App\Contracts;
 
 interface OrderContract
 {
-	public function recheck();
+    public function recheck();
 
-	public function type();
+    public function type();
 
-	public function canInit($order);
+    public function canInit($order);
 
-	public function fixedPricing();
+    public function fixedPricing();
 }

@@ -8,38 +8,39 @@ use Illuminate\Database\Eloquent\Model;
 
 class MPOrder extends Model implements OrderContract
 {
-	protected $table = 'mp_orders';
+    protected $table = 'mp_orders';
 
-	/*****************
-	 * RELATIONSHIPS *
-	 *****************/
+    /*****************
+     * RELATIONSHIPS *
+     *****************/
 
-	public function base()
-	{
-		return $this->morphOne('App\Order', 'orderable');
-	}
+    public function base()
+    {
+        return $this->morphOne('App\Order', 'orderable');
+    }
 
-	/**************
-	 * OVERWRITES *
-	 **************/
+    /**************
+     * OVERWRITES *
+     **************/
 
-	public function recheck()
-	{
-	    /** @var MPOrderService $service */
-	    $service = app(MPOrderService::class);
+    /** @deprecated  */
+    public function recheck()
+    {
+        /** @var MPOrderService $service */
+        $service = app(MPOrderService::class);
 
-	    $service->recheckMPOrder($this);
-	}
+        $service->recheckMPOrder($this);
+    }
 
-	public function type()
-	{
-		return self::class;
-	}
+    public function type()
+    {
+        return self::class;
+    }
 
-	public function canInit($order)
-	{
-		return true;
-	}
+    public function canInit($order)
+    {
+        return true;
+    }
 
     public function fixedPricing()
     {

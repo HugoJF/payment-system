@@ -20,7 +20,7 @@ class WebhookService
 {
     public function createHistory(Order $order, $response)
     {
-        $history = WebhookHistory::make();
+        $history = new WebhookHistory;
 
         $history->status = $response->status;
         $history->response = $response->content;

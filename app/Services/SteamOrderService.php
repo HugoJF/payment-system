@@ -30,8 +30,9 @@ class SteamOrderService
     // TODO: check what's the actual return value of this function
     public function recheckSteamOrder(SteamOrder $order)
     {
-        if (!isset($order->tradeoffer_id))
+        if (!isset($order->tradeoffer_id)) {
             return;
+        }
 
         $offer = SteamAccount::getTradeOffer($order->tradeoffer_id);
 
@@ -71,8 +72,8 @@ class SteamOrderService
         // Send tradeoffer
         $response = SteamAccount::sendTradeOffer($order->payer_tradelink, "Pedido #{$order->id} para \"{$order->reason}\"", $items);
 
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             // Update the order amount
             $order->preset_amount = $value;
 
@@ -89,7 +90,7 @@ class SteamOrderService
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            report($e);
+
             throw $e;
         }
     }
@@ -107,23 +108,14 @@ class SteamOrderService
         return $data->sum('price');
     }
 
-    public function getInventory($steamid)
-    {
-        // Fetch user inventory
-        $inventory = SteamAccount::getInventory($steamid);
-
-        $inventory = $this->mergePricingData($inventory);
-
-        return $inventory;
-    }
-
     public function mergePricingData($inventory)
     {
         $inventory = collect($inventory);
 
         // Check if our database is empty
-        if (SteamItem::count() === 0)
+        if (SteamItem::count() === 0) {
             throw new Exception('Empty SteamItem table, fill it...');
+        }
 
         // Pluck market_hash_names from user inventory
         $requestedItems = $inventory->pluck('market_hash_name');
@@ -162,5 +154,15 @@ class SteamOrderService
         $priceData = $price->only($dataFields);
 
         return $itemData->merge($priceData);
+    }
+
+    public function getInventory($steamid)
+    {
+        // Fetch user inventory
+        $inventory = SteamAccount::getInventory($steamid);
+
+        $inventory = $this->mergePricingData($inventory);
+
+        return $inventory;
     }
 }

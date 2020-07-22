@@ -76,11 +76,6 @@ class RefreshItemData extends Command
         });
     }
 
-    protected function isItemBlacklisted($itemName)
-    {
-        return Str::contains($itemName, $this->blacklistedWords);
-    }
-
     private function getBitSkinsData($tfa)
     {
         return cache()->remember('bit-skins-api', 60000, function () use ($tfa) {
@@ -95,5 +90,10 @@ class RefreshItemData extends Command
 
             return $result->get();
         });
+    }
+
+    protected function isItemBlacklisted($itemName)
+    {
+        return Str::contains($itemName, $this->blacklistedWords);
     }
 }

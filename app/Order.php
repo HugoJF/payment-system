@@ -81,6 +81,15 @@ class Order extends Model implements OrderContract
         }
     }
 
+    public function fixedPricing()
+    {
+        if ($this->orderable) {
+            return $this->orderable->fixedPricing();
+        } else {
+            return null;
+        }
+    }
+
     public function getUnitsAttribute()
     {
         /** @var OrderService $service */
@@ -106,6 +115,15 @@ class Order extends Model implements OrderContract
     public function getTypeAttribute()
     {
         return $this->type();
+    }
+
+    public function type()
+    {
+        if ($this->orderable) {
+            return $this->orderable->type();
+        } else {
+            return false;
+        }
     }
 
     public function getInitPointAttribute()
@@ -138,22 +156,6 @@ class Order extends Model implements OrderContract
         } else {
             return false;
         }
-    }
-
-    public function type()
-    {
-        if ($this->orderable)
-            return $this->orderable->type();
-        else
-            return false;
-    }
-
-    public function fixedPricing()
-    {
-        if ($this->orderable)
-            return $this->orderable->fixedPricing();
-        else
-            return null;
     }
 
     public function canComputeUnits()

@@ -8,18 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayPalOrder extends Model implements OrderContract
 {
-	protected $table = 'paypal_orders';
+    protected $table = 'paypal_orders';
 
-	protected $fillable = ['status'];
+    protected $fillable = ['status'];
 
-	/*****************
-	 * RELATIONSHIPS *
-	 *****************/
+    /*****************
+     * RELATIONSHIPS *
+     *****************/
 
-	public function base()
-	{
-		return $this->morphOne('App\Order', 'orderable');
-	}
+    public function base()
+    {
+        return $this->morphOne('App\Order', 'orderable');
+    }
 
     public function paymentCompleted()
     {
@@ -28,30 +28,31 @@ class PayPalOrder extends Model implements OrderContract
         });
     }
 
-	/**************
-	 * OVERWRITES *
-	 **************/
+    /**************
+     * OVERWRITES *
+     **************/
 
-	/**
-	 * @throws \Exception
-	 */
-	public function recheck()
-	{
-	    /** @var PayPalOrderService $service */
-	    $service = app(PayPalOrderService::class);
+    /**
+     * @throws \Exception
+     * @deprecated
+     */
+    public function recheck()
+    {
+        /** @var PayPalOrderService $service */
+        $service = app(PayPalOrderService::class);
 
-	    $service->recheck($this);
-	}
+        $service->recheck($this);
+    }
 
-	public function type()
-	{
-		return self::class;
-	}
+    public function type()
+    {
+        return self::class;
+    }
 
-	public function canInit($order)
-	{
-		return true;
-	}
+    public function canInit($order)
+    {
+        return true;
+    }
 
     public function fixedPricing()
     {

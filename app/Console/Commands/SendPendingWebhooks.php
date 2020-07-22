@@ -47,6 +47,11 @@ class SendPendingWebhooks extends Command
         }
     }
 
+    protected function forceSend()
+    {
+        return $this->option('force');
+    }
+
     protected function shouldWebhook(Order $order)
     {
         $currentAttempt = $order->webhook_attempts;
@@ -58,10 +63,5 @@ class SendPendingWebhooks extends Command
         $this->info("Current delta: $delta. Expected: $expectedDelta");
 
         return $delta >= $expectedDelta || !$lastAttempt;
-    }
-
-    protected function forceSend()
-    {
-        return $this->option('force');
     }
 }

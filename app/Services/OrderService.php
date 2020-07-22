@@ -30,7 +30,7 @@ class OrderService
 
     public function make(array $data)
     {
-        $order = Order::make();
+        $order = new Order;
 
         $order->fill($data);
 
@@ -42,8 +42,9 @@ class OrderService
     public function update(Order $order, array $data)
     {
         $order->fill($data);
-        if ($order->type() && in_array('orderable', $data))
+        if ($order->type() && in_array('orderable', $data)) {
             $order->orderable->fill($data['orderable']);
+        }
 
         $order->save();
         $order->orderable->save();
@@ -53,8 +54,9 @@ class OrderService
     {
         $webhookUrl = $order->webhook_url;
 
-        if (!$webhookUrl)
+        if (!$webhookUrl) {
             return;
+        }
 
         // Register webhook attempt
         $order->webhook_attempts = $order->webhook_attempts + 1;
@@ -77,6 +79,11 @@ class OrderService
         $webhookService->createHistory($order, $response);
     }
 
+    public function getControllerByType($type)
+    {
+        return $this->getControllerByClass($this->getClassByType($type));
+    }
+
     public function getControllerByClass($class)
     {
         return $this->controllerMap[ $class ] ?? null;
@@ -85,11 +92,6 @@ class OrderService
     public function getClassByType($type)
     {
         return $this->classMap[ $type ] ?? null;
-    }
-
-    public function getControllerByType($type)
-    {
-        return $this->getControllerByClass($this->getClassByType($type));
     }
 
     public function calculateUnits(Order $base, $value)
@@ -102,8 +104,9 @@ class OrderService
             $value -= $perUnit;
             $perUnit -= $base->discount_per_unit;
 
-            if ($perUnit < $base->unit_price_limit)
+            if ($perUnit < $base->unit_price_limit) {
                 $perUnit = $base->unit_price_limit;
+            }
         }
 
         return $units;

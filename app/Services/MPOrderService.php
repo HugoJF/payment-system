@@ -23,7 +23,7 @@ class MPOrderService
         $preference = MP2::create_preference($this->generatePreferenceData($order));
 
         // Prepare to store MercadoPago details to database
-        $mpOrder = MPOrder::make();
+        $mpOrder = new MPOrder;
 
         $mpOrder->preference_id = $preference['response']['id'];
 
@@ -33,55 +33,6 @@ class MPOrderService
         // Associate details to base order
         $mpOrder->base()->save($order);
         $order->save();
-    }
-
-    public function recheckMPOrder(MPOrder $order)
-    {
-        logger()->warning("Rechecking MPOrder {$order->id}");
-
-        $response = MP2::payments_search('external_reference', config('mercadopago.reference_prefix') . $order->base->id);
-
-        // Check for status in response
-        if (!is_array($response) || !array_key_exists('status', $response))
-            throw new Exception('Missing status from response');
-
-        // Check if response is 200
-        if ($response['status'] !== 200)
-            throw new Exception('Non-200 response');
-
-        // Check if response has a response key
-        if (!array_key_exists('response', $response))
-            throw new Exception('Missing response key from response');
-
-        $response = $response['response'];
-
-        if (!array_key_exists('results', $response))
-            throw new Exception('Missing results from response');
-
-        $results = collect($response['results']);
-
-        info("Found {$results->count()} payments while searching with external reference: #{$order->base->id}");
-
-        // Sum approved payments in R$ (not cents)
-        $paidAmount = $this->calculatePaymentsPaidAmount($results);
-
-        // Update order
-        $order->base->paid_amount = $paidAmount * 100;
-        $order->base->save();
-    }
-
-    protected function calculatePaymentsPaidAmount(Collection $payments)
-    {
-        return $payments->reduce(function ($paid, $payment) {
-            $id = $payment['id'];
-            $status = $payment['status'];
-
-            info("--- payment $id is status: $status");
-            if ($status !== 'approved')
-                return $paid;
-
-            return $paid + round($payment['transaction_amount'], 2); // This is R$ and should not be converted to cents.
-        }, 0);
     }
 
     public function generatePreferenceData(Order $order)
@@ -114,6 +65,60 @@ class MPOrderService
     public function getAmount(Order $order)
     {
         return round($order->preset_amount / 100, 2);
+    }
+
+    public function recheckMPOrder(MPOrder $order)
+    {
+        logger()->warning("Rechecking MPOrder {$order->id}");
+
+        $response = MP2::payments_search('external_reference', config('mercadopago.reference_prefix') . $order->base->id);
+
+        // Check for status in response
+        if (!is_array($response) || !array_key_exists('status', $response)) {
+            throw new Exception('Missing status from response');
+        }
+
+        // Check if response is 200
+        if ($response['status'] !== 200) {
+            throw new Exception('Non-200 response');
+        }
+
+        // Check if response has a response key
+        if (!array_key_exists('response', $response)) {
+            throw new Exception('Missing response key from response');
+        }
+
+        $response = $response['response'];
+
+        if (!array_key_exists('results', $response)) {
+            throw new Exception('Missing results from response');
+        }
+
+        $results = collect($response['results']);
+
+        info("Found {$results->count()} payments while searching with external reference: #{$order->base->id}");
+
+        // Sum approved payments in R$ (not cents)
+        $paidAmount = $this->calculatePaymentsPaidAmount($results);
+
+        // Update order
+        $order->base->paid_amount = $paidAmount * 100;
+        $order->base->save();
+    }
+
+    protected function calculatePaymentsPaidAmount(Collection $payments)
+    {
+        return $payments->reduce(function ($paid, $payment) {
+            $id = $payment['id'];
+            $status = $payment['status'];
+
+            info("--- payment $id is status: $status");
+            if ($status !== 'approved') {
+                return $paid;
+            }
+
+            return $paid + round($payment['transaction_amount'], 2); // This is R$ and should not be converted to cents.
+        }, 0);
     }
 
 }

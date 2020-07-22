@@ -19,51 +19,51 @@ use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
-	/**
-	 * Register any application services.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		//
-	}
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
 
-	/**
-	 * Bootstrap any application services.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		Schema::defaultStringLength(191);
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Schema::defaultStringLength(191);
 
-		$this->registerObservers();
-		$this->registerCustomRouteBindings();
-		$this->registerIdeHelper();
-		$this->registerViewComposers();
-	}
+        $this->registerObservers();
+        $this->registerCustomRouteBindings();
+        $this->registerIdeHelper();
+        $this->registerViewComposers();
+    }
 
-	protected function registerObservers(): void
-	{
-		Order::observe(OrderObserver::class);
-		Order::observe(OrderOverpaymentObserver::class);
-		MPOrder::observe(MPOrderObserver::class);
-		PayPalOrder::observe(PayPalOrderObserver::class);
-		SteamOrder::observe(SteamOrderObserver::class);
-	}
+    protected function registerObservers(): void
+    {
+        Order::observe(OrderObserver::class);
+        Order::observe(OrderOverpaymentObserver::class);
+        MPOrder::observe(MPOrderObserver::class);
+        PayPalOrder::observe(PayPalOrderObserver::class);
+        SteamOrder::observe(SteamOrderObserver::class);
+    }
 
-	protected function registerCustomRouteBindings(): void
-	{
-		//
-	}
+    protected function registerCustomRouteBindings(): void
+    {
+        //
+    }
 
-	protected function registerIdeHelper(): void
-	{
-		if ($this->app->environment() !== 'production') {
-			$this->app->register(IdeHelperServiceProvider::class);
-		}
-	}
+    protected function registerIdeHelper(): void
+    {
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(IdeHelperServiceProvider::class);
+        }
+    }
 
     protected function registerViewComposers()
     {

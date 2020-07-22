@@ -22,18 +22,18 @@ class OrderObserver
     }
 
     // This event was commented to allow for Base Order updates without triggering updates?
-//    public function updated(Order $order)
-//    {
-//        if ($order->wasRecentlyCreated) {
-//            return;
-//        }
-//
-//        $changes = $order->getChanges();
-//        unset($changes['created_at']);
-//        unset($changes['updated_at']);
-//
-//        if (count($changes) > 0) {
-//            event(new OrderUpdated($order));
-//        }
-//    }
+    //    public function updated(Order $order)
+    //    {
+    //        if ($order->wasRecentlyCreated) {
+    //            return;
+    //        }
+    //
+    //        $changes = $order->getChanges();
+    //        unset($changes['created_at']);
+    //        unset($changes['updated_at']);
+    //
+    //        if (count($changes) > 0) {
+    //            event(new OrderUpdated($order));
+    //        }
+    //    }
 }

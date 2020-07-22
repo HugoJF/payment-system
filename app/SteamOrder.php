@@ -9,14 +9,6 @@ use App\Contracts\OrderContract;
 
 class SteamOrder extends Model implements OrderContract
 {
-    protected $table = 'steam_orders';
-
-    protected $dates = ['tradeoffer_sent_at'];
-
-    protected $casts = [
-        'items' => 'array',
-    ];
-
     /**********
      * STATES *
      **********/
@@ -32,6 +24,11 @@ class SteamOrder extends Model implements OrderContract
     public const CREATED_NEEDS_CONFIRMATION = 9;
     public const CANCELED_BY_SECOND_FACTOR = 10;
     public const IN_ESCROW = 11;
+    protected $table = 'steam_orders';
+    protected $dates = ['tradeoffer_sent_at'];
+    protected $casts = [
+        'items' => 'array',
+    ];
 
     /*****************
      * RELATIONSHIPS *
@@ -61,6 +58,7 @@ class SteamOrder extends Model implements OrderContract
      * OVERWRITES *
      **************/
 
+    /** @deprecated  */
     public function recheck()
     {
         /** @var SteamOrderService $service */

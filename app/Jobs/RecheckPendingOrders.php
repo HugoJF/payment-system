@@ -35,8 +35,9 @@ class RecheckPendingOrders implements ShouldQueue
             }
 
             // Log if state changed
-            if ($order->paid)
+            if ($order->paid) {
                 info("Order $order->id was detected as paid.");
+            }
         }
     }
 

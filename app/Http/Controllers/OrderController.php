@@ -23,8 +23,9 @@ class OrderController extends Controller
         $controller = $service->getControllerByType($type);
 
         // Check if order is already initialized
-        if ($order->orderable_id)
+        if ($order->orderable_id) {
             return redirect()->route('orders.show', $order);
+        }
 
         info("Forwarding call to $controller controller");
 
@@ -54,8 +55,9 @@ class OrderController extends Controller
 
         $controller = $service->getControllerByClass($type);
 
-        if (!$controller)
+        if (!$controller) {
             throw new Exception("Failed to find controller for order type $type from order $order->id");
+        }
 
         return app()->call("$controller@show", compact('order', 'action'));
     }

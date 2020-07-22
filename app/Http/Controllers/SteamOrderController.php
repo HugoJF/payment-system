@@ -20,8 +20,9 @@ class SteamOrderController extends Controller
      */
     public function init(SteamOrderService $service, Order $order)
     {
-        if (empty($order->payer_tradelink))
+        if (empty($order->payer_tradelink)) {
             throw new Exception('Unable to initialize order with Steam because it\'s missing the tradelink');
+        }
 
         $service->initialize($order);
 

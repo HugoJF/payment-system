@@ -39,7 +39,7 @@ class EventServiceProvider extends ServiceProvider
             TriggerBaseOrderPaid::class,
         ],
 
-        OrderPaid::class    => [
+        OrderPaid::class     => [
             DispatchSendOrderPaidWebhook::class,
         ],
         OrderOverpaid::class => [
