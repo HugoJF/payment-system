@@ -31,8 +31,8 @@
                             <td>
                                 <span class="badge badge-primary">
                                     R$ {{ number_format($order->paid_amount / 100, 2) }}
-                                    @if($order->units($order))
-                                        ({{ $order->units($order) }})
+                                    @if($order->units)
+                                        ({{ $order->units }})
                                     @endif
                                 </span>
                             </td>
@@ -44,8 +44,8 @@
                             <td>
                                 <span class="badge badge-primary">
                                     R$ {{ number_format($order->preset_amount / 100, 2)}}
-                                    @if($order->paidUnits($order))
-                                        ({{ $order->paidUnits($order) }})
+                                    @if($order->paid_units)
+                                        ({{ $order->paid_units }})
                                     @endif
                                 </span>
                             </td>
