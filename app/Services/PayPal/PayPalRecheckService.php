@@ -4,7 +4,6 @@ namespace App\Services\PayPal;
 
 use App\Classes\PayPalWrapper;
 use App\PayPalOrder;
-use App\Services\PayPalOrderService;
 use App\Services\ValueConversionService;
 use Exception;
 

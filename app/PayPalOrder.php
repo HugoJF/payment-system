@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Contracts\OrderContract;
-use App\Services\PayPalOrderService;
+use App\Services\PayPal\PayPalRecheckService;
 use Illuminate\Database\Eloquent\Model;
 
 class PayPalOrder extends Model implements OrderContract
@@ -36,10 +36,10 @@ class PayPalOrder extends Model implements OrderContract
      */
     public function recheck()
     {
-        /** @var PayPalOrderService $service */
-        $service = app(PayPalOrderService::class);
+        /** @var PayPalRecheckService $service */
+        $service = app(PayPalRecheckService::class);
 
-        $service->recheck($this);
+        $service->handle($this);
     }
 
     public function type()

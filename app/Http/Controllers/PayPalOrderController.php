@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Order;
-use App\Services\PayPalOrderService;
+use App\Services\PayPal\PayPalOrderInitializationService;
 
 class PayPalOrderController extends Controller
 {
-    public function init(PayPalOrderService $service, Order $order)
+    public function init(PayPalOrderInitializationService $service, Order $order)
     {
         info("Initializing order $order->id as PayPalOrder");
-        $service->initialize($order);
+        $service->handle($order);
 
         return redirect()->route('orders.show', $order);
     }

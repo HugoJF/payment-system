@@ -13,15 +13,9 @@ class PayPalCheckoutCartService
      */
     protected $conversionService;
 
-    /**
-     * @var PayPalOrderService
-     */
-    protected $paypalService;
-
-    public function __construct(ValueConversionService $conversionService, PayPalOrderService $paypalService)
+    public function __construct(ValueConversionService $conversionService)
     {
         $this->conversionService = $conversionService;
-        $this->paypalService = $paypalService;
     }
 
     public function handle(Order $order)
