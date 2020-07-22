@@ -14,6 +14,7 @@ class CreateOrderRequest extends FormRequest
     public function rules()
     {
         return [
+            'email'                 => 'email|nullable',
             'reason'                => 'required',
             'return_url'            => 'required',
             'cancel_url'            => 'required',

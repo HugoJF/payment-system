@@ -24,6 +24,7 @@ class Order extends Model implements OrderContract
     ];
 
     protected $fillable = [
+        'email',
         'reason',
         'return_url',
         'cancel_url',
