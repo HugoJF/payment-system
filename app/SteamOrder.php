@@ -83,4 +83,9 @@ class SteamOrder extends Model implements OrderContract
     {
         return isset($order->payer_tradelink);
     }
+
+    public function fixedPricing()
+    {
+        return false;
+    }
 }

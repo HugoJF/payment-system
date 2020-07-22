@@ -9,4 +9,6 @@ interface OrderContract
 	public function type();
 
 	public function canInit($order);
+
+	public function fixedPricing();
 }

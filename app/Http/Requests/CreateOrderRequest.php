@@ -20,6 +20,7 @@ class CreateOrderRequest extends FormRequest
             'webhook_url'           => 'nullable|string',
             'view_url'              => 'nullable|string',
             'preset_amount'         => 'required|numeric',
+            'preset_units'          => 'required|numeric',
             'unit_price'            => 'required|numeric',
             'unit_price_limit'      => 'required|numeric',
             'discount_per_unit'     => 'required|numeric',

@@ -40,4 +40,9 @@ class MPOrder extends Model implements OrderContract
 	{
 		return true;
 	}
+
+    public function fixedPricing()
+    {
+        return true;
+    }
 }

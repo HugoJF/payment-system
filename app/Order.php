@@ -30,6 +30,7 @@ class Order extends Model implements OrderContract
         'webhook_url',
         'view_url',
         'preset_amount',
+        'preset_units',
         'payer_steam_id',
         'payer_tradelink',
         'unit_price',
@@ -72,7 +73,11 @@ class Order extends Model implements OrderContract
         /** @var OrderService $service */
         $service = app(OrderService::class);
 
-        return $service->calculateUnits($this, $this->paid_amount);
+        if ($this->fixedPricing()) {
+            return $this->preset_units * ($this->paid_amount / $this->preset_amount);
+        } else {
+            return $service->calculateUnits($this, $this->paid_amount);
+        }
     }
 
     public function getUnitsAttribute()
@@ -80,7 +85,16 @@ class Order extends Model implements OrderContract
         /** @var OrderService $service */
         $service = app(OrderService::class);
 
-        return $service->calculateUnits($this, $this->preset_amount);
+        if ($this->fixedPricing()) {
+            return $this->preset_units;
+        } else {
+            return $service->calculateUnits($this, $this->preset_amount);
+        }
+    }
+
+    public function getOverPaidAttribute()
+    {
+        return $this->paid_amount > $this->preset_amount;
     }
 
     public function getPaidAttribute()
@@ -131,5 +145,18 @@ class Order extends Model implements OrderContract
             return $this->orderable->type();
         else
             return false;
+    }
+
+    public function fixedPricing()
+    {
+        if ($this->orderable)
+            return $this->orderable->fixedPricing();
+        else
+            return null;
+    }
+
+    public function canComputeUnits()
+    {
+        return !is_null($this->preset_units);
     }
 }

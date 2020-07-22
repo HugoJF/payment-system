@@ -30,7 +30,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('orders/{order}', 'HomeController@show')->name('admin.orders.show');
     Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
-    Route::get('orders/{order}/recheck', 'HomeContr oller@recheck')->name('admin.orders.recheck');
+    Route::get('orders/{order}/recheck', 'HomeController@recheck')->name('admin.orders.recheck');
 
     Route::patch('orders/{order}', 'HomeController@update')->name('admin.orders.update');
 });

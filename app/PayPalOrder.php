@@ -52,4 +52,9 @@ class PayPalOrder extends Model implements OrderContract
 	{
 		return true;
 	}
+
+    public function fixedPricing()
+    {
+        return true;
+    }
 }
