@@ -87,7 +87,6 @@ class PayPalOrderService
 
     public function recheck(PayPalOrder $order)
     {
-
         // Check if order has any token associated with it
         if (!$order->token) {
             info(sprintf('Failed rechecking order %s that has no PayPal token.', $order->base->id));
@@ -125,12 +124,10 @@ class PayPalOrderService
         $order->transaction_id = $response['TRANSACTIONID'];
 
         // Retrieve payment details
-        $paymentDetails = PayPalWrapper::getTransactionDetails($order->transaction_id);
-        $status = $paymentDetails['PAYMENTSTATUS'];
+        $transaction = PayPalWrapper::getTransactionDetails($order->transaction_id);
 
         // Update database
-        $order->status = $status;
-        $order->save();
+        $order->status = $transaction['PAYMENTSTATUS'];
 
         // Update base order
         if ($order->paymentCompleted()) {
@@ -139,5 +136,8 @@ class PayPalOrderService
 
             event(new PayPalOrderPaid($order));
         }
+
+        // Only trigger saved event after base order is updated.
+        $order->save();
     }
 }

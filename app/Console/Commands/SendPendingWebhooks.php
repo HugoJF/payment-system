@@ -33,6 +33,7 @@ class SendPendingWebhooks extends Command
         $this->maxPeriods = count($this->periods);
 
         $pending = Order::query()
+                        ->paid()
                         ->where('webhook_url', '!=', null)
                         ->where('webhooked_at', null)
                         ->where('webhook_attempts', '<', $this->maxPeriods)
