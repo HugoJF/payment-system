@@ -9,14 +9,14 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class OrderPaid extends OrderEvent implements ShouldBroadcast
+class OrderOverpaid extends OrderEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param Order $order
      */
     public function __construct(Order $order)
     {

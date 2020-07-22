@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\OrderPaid;
+use App\Events\OrderEvent;
 use App\Jobs\SendOrderPaidWebhook;
 
 class DispatchSendOrderPaidWebhook
@@ -10,12 +10,12 @@ class DispatchSendOrderPaidWebhook
     /**
      * Handle the event.
      *
-     * @param OrderPaid $event
+     * @param OrderEvent $event
      *
      * @return void
      */
-    public function handle(OrderPaid $event)
+    public function handle(OrderEvent $event)
     {
-        dispatch(new SendOrderPaidWebhook($event->order));
+        dispatch(new SendOrderPaidWebhook($event->getBaseOrder()));
     }
 }

@@ -54,25 +54,25 @@ class RefreshPendingOrders extends Command
 
         // TODO: update database to allow unpaid scope
         $pendingOrders = Order::query()
-            ->unpaid()
-            ->lessRechecksThan($maxRechecks)
-            ->cursor();
+                              ->unpaid()
+                              ->lessRechecksThan($maxRechecks)
+                              ->cursor();
 
         foreach ($pendingOrders as $order) {
-            if ($this->shouldRecheck($order))
+            if ($this->shouldRecheck($order)) {
                 $this->recheckOrder($order);
+            }
         }
     }
 
     private function shouldRecheck(Order $order)
     {
-        $delta = $this->rechecks[$order->recheck_attempts];
+        $delta = $this->rechecks[ $order->recheck_attempts ];
         $current = now()->diffInSeconds($order->updated_at, true);
 
-        info("Checking if order $order->id needs recheck $current (current) > $delta (delta)");
+        $this->info("Checking if order $order->id needs recheck $current (current) > $delta (delta)");
 
         return $current > $delta;
-
     }
 
     private function recheckOrder(Order $order)

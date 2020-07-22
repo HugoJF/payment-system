@@ -4,14 +4,19 @@ namespace App\Providers;
 
 use App\Events\MPOrderPaid;
 use App\Events\MPOrderUpdated;
+use App\Events\MPOrderUpdating;
+use App\Events\OrderOverpaid;
 use App\Events\OrderPaid;
+use App\Events\OrderUpdated;
 use App\Events\PayPalOrderPaid;
 use App\Events\PayPalOrderUpdated;
+use App\Events\PayPalOrderUpdating;
 use App\Events\SteamOrderPaid;
 use App\Events\SteamOrderUpdated;
+use App\Events\SteamOrderUpdating;
+use App\Listeners\CheckOverpayment;
 use App\Listeners\DispatchSendOrderPaidWebhook;
 use App\Listeners\TriggerBaseOrderPaid;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -34,17 +39,10 @@ class EventServiceProvider extends ServiceProvider
             TriggerBaseOrderPaid::class,
         ],
 
-        MPOrderUpdated::class     => [
-            TriggerBaseOrderPaid::class,
+        OrderPaid::class    => [
+            DispatchSendOrderPaidWebhook::class,
         ],
-        PayPalOrderUpdated::class => [
-            TriggerBaseOrderPaid::class,
-        ],
-        SteamOrderUpdated::class  => [
-            TriggerBaseOrderPaid::class,
-        ],
-
-        OrderPaid::class => [
+        OrderOverpaid::class => [
             DispatchSendOrderPaidWebhook::class,
         ],
 

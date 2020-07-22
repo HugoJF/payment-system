@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\MPOrder;
 use App\Observers\MPOrderObserver;
 use App\Observers\OrderObserver;
+use App\Observers\OrderOverpaymentObserver;
 use App\Observers\PayPalOrderObserver;
 use App\Observers\SteamOrderObserver;
 use App\Order;
@@ -46,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
 	protected function registerObservers(): void
 	{
 		Order::observe(OrderObserver::class);
+		Order::observe(OrderOverpaymentObserver::class);
 		MPOrder::observe(MPOrderObserver::class);
 		PayPalOrder::observe(PayPalOrderObserver::class);
 		SteamOrder::observe(SteamOrderObserver::class);

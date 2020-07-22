@@ -56,9 +56,6 @@ class OrderService
         if (!$webhookUrl)
             return;
 
-        if ($order->webhooked_at)
-            return;
-
         // Register webhook attempt
         $order->webhook_attempts = $order->webhook_attempts + 1;
         $order->webhook_attempted_at = now();

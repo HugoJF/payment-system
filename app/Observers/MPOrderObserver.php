@@ -13,11 +13,7 @@ class MPOrderObserver
             return;
         }
 
-        $changes = $order->getChanges();
-        unset($changes['created_at']);
-        unset($changes['updated_at']);
-
-        if (count($changes) > 0) {
+        if ($order->isDirty()) {
             event(new MPOrderUpdated($order));
         }
     }
