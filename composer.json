@@ -21,6 +21,7 @@
         "sentry/sentry-laravel": "1.2.0",
         "spatie/laravel-backup": "^6.7",
         "spatie/laravel-blade-javascript": "^2.4",
+        "spatie/laravel-searchable": "^1.6",
         "srmklive/paypal": "~1.0"
     },
     "require-dev": {

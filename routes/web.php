@@ -27,6 +27,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', 'HomeController@index')->name('admin.index');
     Route::get('/home', 'HomeController@home')->name('admin.home');
 	Route::get('orders', 'HomeController@orders')->name('admin.orders');
+	Route::get('search', 'HomeController@search')->name('admin.search');
 
     Route::get('orders/{order}', 'HomeController@show')->name('admin.orders.show');
     Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');

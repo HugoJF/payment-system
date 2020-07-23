@@ -31,7 +31,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav mr-auto">
-
+                    <!--  -->
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -72,6 +72,14 @@
 
     <main class="py-4">
         <div class="container">
+            <div>
+                {{ Form::open(['method' => 'GET', 'url' => route('admin.search')]) }}
+                <div class="form-group">
+                    <label for="search">Search</label>
+                    <input id="search" name="term" type="text" class="form-control">
+                </div>
+                {{ Form::close() }}
+            </div>
             @yield('content')
         </div>
     </main>

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Forms\OrderForm;
+use App\Http\Requests\SearchRequest;
 use App\Order;
 use App\OrderService;
 use App\Services\Forms\OrderForms;
 use App\Services\OrderPreApprovalService;
+use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
 
@@ -22,6 +24,21 @@ class HomeController extends Controller
         $orders = Order::query()->orderBy('created_at', 'DESC')->limit(15)->get();
 
         return view('admin.home', compact('orders'));
+    }
+
+    public function search(SearchService $service, SearchRequest $request)
+    {
+        $mapping = [
+            'orders' => [
+                'title'    => 'Orders',
+                'view'     => 'admin.cards.orders',
+                'variable' => 'orders',
+            ],
+        ];
+
+        $result = $service->search($request->input('term'));
+
+        return view('admin.search', compact('result', 'mapping'));
     }
 
     public function orders()

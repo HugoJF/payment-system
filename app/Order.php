@@ -6,8 +6,10 @@ use App\Contracts\OrderContract;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class Order extends Model implements OrderContract
+class Order extends Model implements OrderContract, Searchable
 {
     public const PAYPAL = 'paypal';
     public const MERCADOPAGO = 'mp';
@@ -170,5 +172,14 @@ class Order extends Model implements OrderContract
     public function canComputeUnits()
     {
         return !is_null($this->preset_units);
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->id,
+            route('orders.show', $this),
+        );
     }
 }
