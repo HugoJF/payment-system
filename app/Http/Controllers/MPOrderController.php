@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\MP2;
 use App\Order;
+use App\OrderService;
 use App\Services\MPOrderService;
 use Illuminate\Http\Request;
 use Symplify\EasyCodingStandard\SniffRunner\Exception\File\NotImplementedException;
@@ -33,11 +34,31 @@ class MPOrderController extends Controller
         return view('orders.order-error', compact('order'));
     }
 
-    public function ipn(Request $request)
+    public function ipn(MPOrderService $service, Request $request)
     {
-        info('Received IPN from MercadoPago', ['data', $request->all()]);
+        $id = $request->query('id');
+        $topic = $request->query('topic');
 
-        throw new NotImplementedException();
+        info("IPN from MercadoPago: id=$id topic=$topic");
+
+        if ($topic !== 'payment') {
+            return response()->json([]);
+        }
+
+        $payment = $service->findPayment($id);
+
+        $externalReference = $payment['external_reference'];
+        info("Found payment with external reference: $externalReference");
+
+        $id = preg_replace(config('mercadopago.reference_prefix'), '', $externalReference);
+        info("Cleaned external reference to $id");
+
+        /** @var Order $order */
+        $order = Order::find($id);
+
+        $order->recheck();
+
+        return response()->json([]);
     }
 
 }

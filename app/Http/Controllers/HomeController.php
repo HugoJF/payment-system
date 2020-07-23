@@ -19,14 +19,14 @@ class HomeController extends Controller
 
     public function home()
     {
-        $orders = Order::query()->orderBy('created_at', 'DESC')->limit(5)->get();
+        $orders = Order::query()->orderBy('created_at', 'DESC')->limit(15)->get();
 
         return view('admin.home', compact('orders'));
     }
 
     public function orders()
     {
-        $orders = Order::query()->orderBy('created_at', 'DESC')->paginate(10);
+        $orders = Order::query()->orderBy('created_at', 'DESC')->paginate(15);
 
         return view('admin.orders', compact('orders'));
     }

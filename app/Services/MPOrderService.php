@@ -8,6 +8,8 @@
 
 namespace App\Services;
 
+use App\Classes\MP2;
+use App\Exceptions\InvalidResponseException;
 use App\MPOrder;
 use App\Order;
 use App\Services\MP\MPOrderInitializationService;
@@ -56,5 +58,29 @@ class MPOrderService
         $service = app(MPRecheckService::class);
 
         $service->handle($order);
+    }
+
+    public function findPayment($id)
+    {
+        $payment = MP2::get_payment($id);
+
+        // Check for status in response
+        if (!is_array($payment) || !array_key_exists('status', $payment)) {
+            info('Invalid response from MP', compact('payments'));
+            throw new InvalidResponseException;
+        }
+
+        // Check if response is 200
+        if (!in_array($payment['status'], [200, 201])) {
+            info('Unexpected response code' . $payment['status'], compact('payments'));
+            throw new InvalidResponseException;
+        }
+
+        // Check if response has a response key
+        if (!array_key_exists('response', $payment)) {
+            throw new InvalidResponseException;
+        }
+
+        return $payment['response'];
     }
 }
