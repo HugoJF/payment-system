@@ -8,10 +8,20 @@ use App\Order;
 
 class MPOrderInitializationService
 {
+    /**
+     * @var MPPreferenceDataService
+     */
+    protected MPPreferenceDataService $preferenceDataService;
+
+    public function __construct(MPPreferenceDataService $preferenceDataService)
+    {
+        $this->preferenceDataService = $preferenceDataService;
+    }
+
     public function handle(Order $order)
     {
         // Attempt to create a new MercadoPago preference
-        $preference = MP2::create_preference($this->generatePreferenceData($order));
+        $preference = MP2::create_preference($this->preferenceDataService->handle($order));
 
         // Prepare to store MercadoPago details to database
         $mpOrder = new MPOrder;

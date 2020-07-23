@@ -39,7 +39,7 @@ class MPRecheckService
         }
 
         // Check if response is 200
-        if (in_array($payments['status'], [200, 201])) {
+        if (!in_array($payments['status'], [200, 201])) {
             info('Unexpected response code' . $payments['status'], compact('payments'));
             throw new InvalidResponseException;
         }
@@ -52,7 +52,7 @@ class MPRecheckService
         $payments = $payments['response'];
 
         if (!array_key_exists('results', $payments)) {
-            throw new Exception('Missing results from response');
+            throw new InvalidResponseException;
         }
 
         $count = count($payments);
