@@ -32,5 +32,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('orders/{order}/edit', 'HomeController@edit')->name('admin.orders.edit');
     Route::get('orders/{order}/recheck', 'HomeController@recheck')->name('admin.orders.recheck');
 
+    Route::patch('orders/{order}/pre-approve', 'HomeController@preApprove')->name('admin.orders.pre-approve');
     Route::patch('orders/{order}', 'HomeController@update')->name('admin.orders.update');
 });

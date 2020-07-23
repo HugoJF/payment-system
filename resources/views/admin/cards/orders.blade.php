@@ -88,6 +88,11 @@
                     <!-- Actions -->
                     <td class="d-flex justify-content-end">
                         <div class="btn-group">
+                            @if(!$order->pre_approved_at && !$order->paid)
+                                {{ Form::open(['method' => 'PATCH', 'url' => route('admin.orders.pre-approve', $order)]) }}
+                                <button class="btn btn-primary btn-sm" type="submit">Pre-approve</button>
+                                {{ Form::close() }}
+                            @endif
                             @if($order->view_url)
                                 <a class="btn btn-sm btn-outline-primary" href="{{ $order->view_url }}">View</a>
                             @endif

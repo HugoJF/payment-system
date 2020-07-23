@@ -7,6 +7,7 @@ use App\Events\MPOrderUpdated;
 use App\Events\MPOrderUpdating;
 use App\Events\OrderOverpaid;
 use App\Events\OrderPaid;
+use App\Events\OrderPreApproved;
 use App\Events\OrderUpdated;
 use App\Events\PayPalOrderPaid;
 use App\Events\PayPalOrderUpdated;
@@ -33,6 +34,9 @@ class EventServiceProvider extends ServiceProvider
             DispatchSendOrderPaidWebhook::class,
         ],
         OrderOverpaid::class => [
+            DispatchSendOrderPaidWebhook::class,
+        ],
+        OrderPreApproved::class => [
             DispatchSendOrderPaidWebhook::class,
         ],
 

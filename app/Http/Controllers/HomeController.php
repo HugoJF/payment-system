@@ -6,6 +6,7 @@ use App\Forms\OrderForm;
 use App\Order;
 use App\OrderService;
 use App\Services\Forms\OrderForms;
+use App\Services\OrderPreApprovalService;
 use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
 
@@ -44,6 +45,15 @@ class HomeController extends Controller
             'form'        => $form,
             'submit_text' => 'Update',
         ]);
+    }
+
+    public function preApprove(OrderPreApprovalService $preApprovalService, Order $order)
+    {
+        $preApprovalService->handle($order);
+
+        flash()->success("Order pre-approved!");
+
+        return back();
     }
 
     public function update(OrderService $service, Request $request, Order $order)

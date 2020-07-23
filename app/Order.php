@@ -20,7 +20,7 @@ class Order extends Model implements OrderContract
     protected $appends = ['units', 'paid_units', 'paid', 'type', 'init_point'];
 
     protected $dates = [
-        'webhooked_at', 'webhook_attempted_at',
+        'webhooked_at', 'webhook_attempted_at', 'pre_approved_at',
     ];
 
     protected $fillable = [
@@ -74,6 +74,10 @@ class Order extends Model implements OrderContract
         /** @var OrderService $service */
         $service = app(OrderService::class);
 
+        if ($this->paid_amount === 0 && $this->pre_approved_at) {
+            return $this->preset_units;
+        }
+
         if ($this->fixedPricing()) {
             return $this->preset_units * ($this->paid_amount / $this->preset_amount);
         } else {
@@ -109,6 +113,10 @@ class Order extends Model implements OrderContract
 
     public function getPaidAttribute()
     {
+        if ($this->pre_approved_at) {
+            return true;
+        }
+
         return $this->paid_amount >= $this->preset_amount;
     }
 
