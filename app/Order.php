@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Contracts\OrderContract;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Searchable\Searchable;
@@ -75,6 +74,10 @@ class Order extends Model implements OrderContract, Searchable
     {
         /** @var OrderService $service */
         $service = app(OrderService::class);
+
+        if (!$this->canComputeUnits()) {
+            return null;
+        }
 
         if ($this->paid_amount === 0 && $this->pre_approved_at) {
             return $this->preset_units;
