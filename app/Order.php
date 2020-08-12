@@ -79,7 +79,7 @@ class Order extends Model implements OrderContract, Searchable
             return null;
         }
 
-        if ($this->paid_amount === 0 && $this->pre_approved_at) {
+        if (!$this->paid && $this->pre_approved_at) {
             return $this->preset_units;
         }
 
@@ -151,7 +151,7 @@ class Order extends Model implements OrderContract, Searchable
 
         $class = $service->getClassByType($type);
 
-        if ($class) {
+        if (class_exists($class)) {
             $c = app($class);
 
             return $c->canInit($this);
