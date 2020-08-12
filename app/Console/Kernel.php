@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new PingHealthChecks);
+        $schedule->job(new PingHealthChecks)->everyMinute();
 
         $schedule->command('steamorders:refresh')->everyMinute();
 
